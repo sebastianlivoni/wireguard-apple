@@ -152,7 +152,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows _: Bool) -> Bool {
-        self?.showManageTunnelsWindow(completion: nil)
+        self.showManageTunnelsWindow(completion: nil)
         return true
     }
 
