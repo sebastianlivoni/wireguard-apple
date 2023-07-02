@@ -83,6 +83,15 @@ class PacketTunnelSettingsGenerator {
          */
         let networkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "127.0.0.1")
 
+        if let pacURL = tunnelConfiguration.interface.pac {
+            let proxySettings = NEProxySettings()
+
+            proxySettings.proxyAutoConfigurationURL = URL(string: pacURL)
+            proxySettings.autoProxyConfigurationEnabled = true
+
+            networkSettings.proxySettings = proxySettings
+        }
+
         if !tunnelConfiguration.interface.dnsSearch.isEmpty || !tunnelConfiguration.interface.dns.isEmpty {
             let dnsServerStrings = tunnelConfiguration.interface.dns.map { $0.stringRepresentation }
             let dnsSettings = NEDNSSettings(servers: dnsServerStrings)

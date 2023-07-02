@@ -14,6 +14,7 @@ class TunnelViewModel {
         case listenPort
         case mtu
         case dns
+        case pac
         case status
         case toggleStatus
 
@@ -27,6 +28,7 @@ class TunnelViewModel {
             case .listenPort: return tr("tunnelInterfaceListenPort")
             case .mtu: return tr("tunnelInterfaceMTU")
             case .dns: return tr("tunnelInterfaceDNS")
+            case .pac: return tr("tunnelInterfacePAC")
             case .status: return tr("tunnelInterfaceStatus")
             case .toggleStatus: return ""
             }
@@ -144,6 +146,9 @@ class TunnelViewModel {
                 dns.append(contentsOf: config.dnsSearch)
                 scratchpad[.dns] = dns.joined(separator: ", ")
             }
+            if let pacURL = config.pac {
+                scratchpad[.pac] = pacURL
+            }
             return scratchpad
         }
 
@@ -206,6 +211,9 @@ class TunnelViewModel {
                 }
                 config.dns = dnsServers
                 config.dnsSearch = dnsSearch
+            }
+            if let pacString = scratchpad[.pac] {
+                config.pac = pacString
             }
 
             guard errorMessages.isEmpty else { return .error(errorMessages.first!) }

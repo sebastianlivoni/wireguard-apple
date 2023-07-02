@@ -9,6 +9,7 @@
 #include <string.h>
 #include <errno.h>
 #include "highlighter.h"
+#include <regex.h>
 
 typedef struct {
 	const char *s;
@@ -89,6 +90,22 @@ static bool is_valid_key(string_span_t s)
 		return false;
 	}
 	return true;
+}
+
+static bool is_valid_url(string_span_t s)
+{
+    regex_t regex;
+    int status;
+    
+    status = regcomp(&regex, "^(http:\\/\\/|https:\\/\\/).*\\.[a-zA-Z]{2,}", REG_EXTENDED);
+    if (status) {
+        return false;
+    }
+    
+    status = regexec(&regex, s.s, 0, NULL, 0);
+    regfree(&regex);
+    
+    return status == 0;
 }
 
 static bool is_valid_hostname(string_span_t s)
@@ -343,6 +360,7 @@ enum field {
 	ListenPort,
 	Address,
 	DNS,
+    PAC,
 	MTU,
 #ifndef MOBILE_WGQUICK_SUBSET
 	FwMark,
@@ -377,6 +395,7 @@ static enum field get_field(string_span_t s)
 	check_enum(ListenPort);
 	check_enum(Address);
 	check_enum(DNS);
+    check_enum(PAC);
 	check_enum(MTU);
 	check_enum(PublicKey);
 	check_enum(PresharedKey);
@@ -522,6 +541,9 @@ static void highlight_value(struct highlight_span_array *ret, const string_span_
 	case MTU:
 		append_highlight_span(ret, parent.s, s, is_valid_mtu(s) ? HighlightMTU : HighlightError);
 		break;
+    case PAC:
+        append_highlight_span(ret, parent.s, s, is_valid_url(s) ? HighlightHost : HighlightError);
+        break;
 #ifndef MOBILE_WGQUICK_SUBSET
 	case SaveConfig:
 		append_highlight_span(ret, parent.s, s, is_valid_saveconfig(s) ? HighlightSaveConfig : HighlightError);

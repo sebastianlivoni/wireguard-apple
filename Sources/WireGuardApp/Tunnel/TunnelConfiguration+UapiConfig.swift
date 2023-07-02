@@ -75,6 +75,7 @@ extension TunnelConfiguration {
         interfaceConfiguration?.addresses = base?.interface.addresses ?? []
         interfaceConfiguration?.dns = base?.interface.dns ?? []
         interfaceConfiguration?.dnsSearch = base?.interface.dnsSearch ?? []
+        interfaceConfiguration?.pac = base?.interface.pac ?? ""
         interfaceConfiguration?.mtu = base?.interface.mtu
 
         if let interfaceConfiguration = interfaceConfiguration {
