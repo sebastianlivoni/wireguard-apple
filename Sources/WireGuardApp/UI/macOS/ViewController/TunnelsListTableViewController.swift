@@ -4,13 +4,21 @@
 import Cocoa
 
 protocol TunnelsListTableViewControllerDelegate: AnyObject {
-    func tunnelsSelected(tunnelIndices: [Int])
+    func tunnelsSelected(tunnels: [TunnelContainer])
     func tunnelsListEmpty()
+}
+
+extension TunnelsListTableViewControllerDelegate {
+    func focusSearchBar() {
+        // empty
+    }
 }
 
 class TunnelsListTableViewController: NSViewController {
 
     let tunnelsManager: TunnelsManager
+    var filteredTunnels = [TunnelContainer]()
+
     weak var delegate: TunnelsListTableViewControllerDelegate?
     var isRemovingTunnelsFromWithinTheApp = false
 
@@ -40,6 +48,12 @@ class TunnelsListTableViewController: NSViewController {
         return button
     }()
 
+    let searchBar: NSSearchField = {
+        let searchBar = NSSearchField()
+
+        return searchBar
+    }()
+
     let removeButton: NSButton = {
         let image = NSImage(named: NSImage.removeTemplateName)!
         let button = NSButton(image: image, target: self, action: #selector(handleRemoveTunnelAction))
@@ -67,6 +81,7 @@ class TunnelsListTableViewController: NSViewController {
 
     init(tunnelsManager: TunnelsManager) {
         self.tunnelsManager = tunnelsManager
+        self.filteredTunnels = tunnelsManager.tunnels
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -91,6 +106,8 @@ class TunnelsListTableViewController: NSViewController {
         scrollView.autohidesScrollers = true
         scrollView.borderType = .bezelBorder
 
+        searchBar.delegate = self
+
         let clipView = NSClipView()
         clipView.documentView = tableView
         scrollView.contentView = clipView
@@ -108,15 +125,20 @@ class TunnelsListTableViewController: NSViewController {
         let fillerButton = FillerButton()
 
         let containerView = NSView()
+        containerView.addSubview(searchBar)
         containerView.addSubview(scrollView)
         containerView.addSubview(buttonBar)
         containerView.addSubview(fillerButton)
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         buttonBar.translatesAutoresizingMaskIntoConstraints = false
         fillerButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            containerView.topAnchor.constraint(equalTo: searchBar.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: searchBar.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: searchBar.trailingAnchor),
+            searchBar.bottomAnchor.constraint(equalTo: scrollView.topAnchor, constant: -5),
             containerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: buttonBar.topAnchor, constant: 1),
@@ -304,23 +326,62 @@ extension TunnelsListTableViewController {
     }
 }
 
+extension TunnelsListTableViewController: NSSearchFieldDelegate {
+    func searchFieldDidStartSearching(_ sender: NSSearchField) {
+        // print("search started") // TODO: Implement?
+    }
+
+    func searchFieldDidEndSearching(_ sender: NSSearchField) {
+        // print("search ended") // TODO: Implement?
+    }
+
+    func controlTextDidChange(_ obj: Notification) {
+        filteredTunnels = []
+        let searchText = searchBar.stringValue.lowercased()
+
+        if searchText.isEmpty {
+            filteredTunnels = tunnelsManager.tunnels
+        } else {
+            for tunnel in tunnelsManager.tunnels where tunnel.name.lowercased().contains(searchText) {
+                filteredTunnels.append(tunnel)
+            }
+        }
+
+        tableView.reloadData()
+    }
+}
+
 extension TunnelsListTableViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return tunnelsManager.numberOfTunnels()
+        return filteredTunnels.count
     }
 }
 
 extension TunnelsListTableViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let cell: TunnelListRow = tableView.dequeueReusableCell()
-        cell.tunnel = tunnelsManager.tunnel(at: row)
+        cell.tunnel = filteredTunnels[row]
+
         return cell
     }
 
     func tableViewSelectionDidChange(_ notification: Notification) {
-        let selectedTunnelIndices = tableView.selectedRowIndexes.sorted()
-        if !selectedTunnelIndices.isEmpty {
-            delegate?.tunnelsSelected(tunnelIndices: tableView.selectedRowIndexes.sorted())
+        guard let tableView = notification.object as? NSTableView else {
+            return
+        }
+
+        var tunnelsSelected = [TunnelContainer]()
+
+        let selectedRowIndexes = tableView.selectedRowIndexes
+
+        selectedRowIndexes.forEach { rowIndex in
+            if let cell = tableView.view(atColumn: 0, row: rowIndex, makeIfNecessary: false) as? TunnelListRow {
+                tunnelsSelected.append(cell.tunnel!)
+            }
+        }
+
+        if !tunnelsSelected.isEmpty {
+            delegate?.tunnelsSelected(tunnels: tunnelsSelected)
         }
     }
 }
@@ -329,6 +390,8 @@ extension TunnelsListTableViewController {
     override func keyDown(with event: NSEvent) {
         if event.specialKey == .delete {
             handleRemoveTunnelAction()
+        } else {
+            super.keyDown(with: event)
         }
     }
 }
@@ -359,5 +422,11 @@ class FillerButton: NSButton {
 
     override func mouseDown(with event: NSEvent) {
         // Eat mouseDown event, so that the button looks enabled but is unresponsive
+    }
+}
+
+extension TunnelsListTableViewController {
+    @objc func focusSearchBar() {
+        searchBar.window?.makeFirstResponder(searchBar)
     }
 }

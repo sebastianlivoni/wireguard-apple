@@ -20,7 +20,7 @@ protocol TunnelsManagerActivationDelegate: AnyObject {
 }
 
 class TunnelsManager {
-    private var tunnels: [TunnelContainer]
+    public private(set) var tunnels: [TunnelContainer]
     weak var tunnelsListDelegate: TunnelsManagerListDelegate?
     weak var activationDelegate: TunnelsManagerActivationDelegate?
     private var statusObservationToken: NotificationToken?

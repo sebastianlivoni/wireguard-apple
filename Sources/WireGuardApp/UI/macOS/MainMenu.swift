@@ -78,6 +78,7 @@ class MainMenu: NSMenu {
     }
 
     private func createEditMenu() -> NSMenu {
+
         let menu = NSMenu(title: tr("macMenuEdit"))
 
         menu.addItem(withTitle: "", action: #selector(UndoActionRespondable.undo(_:)), keyEquivalent:"z")
@@ -92,6 +93,7 @@ class MainMenu: NSMenu {
         menu.addItem(NSMenuItem.separator())
 
         menu.addItem(withTitle: tr("macMenuSelectAll"), action: #selector(NSText.selectAll(_:)), keyEquivalent:"a")
+        menu.addItem(withTitle: "Search", action: #selector(TunnelsListTableViewController.focusSearchBar), keyEquivalent:"f")
 
         return menu
     }

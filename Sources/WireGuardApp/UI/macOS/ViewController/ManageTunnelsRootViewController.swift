@@ -77,10 +77,10 @@ class ManageTunnelsRootViewController: NSViewController {
 }
 
 extension ManageTunnelsRootViewController: TunnelsListTableViewControllerDelegate {
-    func tunnelsSelected(tunnelIndices: [Int]) {
-        assert(!tunnelIndices.isEmpty)
-        if tunnelIndices.count == 1 {
-            let tunnel = tunnelsManager.tunnel(at: tunnelIndices.first!)
+    func tunnelsSelected(tunnels: [TunnelContainer]) {
+        assert(!tunnels.isEmpty)
+        if tunnels.count == 1 {
+            let tunnel = tunnels.first!
             if tunnel.isTunnelAvailableToUser {
                 let tunnelDetailVC = TunnelDetailTableViewController(tunnelsManager: tunnelsManager, tunnel: tunnel)
                 setTunnelDetailContentVC(tunnelDetailVC)
@@ -93,9 +93,9 @@ extension ManageTunnelsRootViewController: TunnelsListTableViewControllerDelegat
                 setTunnelDetailContentVC(unusableTunnelDetailVC)
                 self.tunnelDetailVC = nil
             }
-        } else if tunnelIndices.count > 1 {
+        } else if tunnels.count > 1 {
             let multiSelectionVC = tunnelDetailContentVC as? ButtonedDetailViewController ?? ButtonedDetailViewController()
-            multiSelectionVC.setButtonTitle(tr(format: "macButtonDeleteTunnels (%d)", tunnelIndices.count))
+            multiSelectionVC.setButtonTitle(tr(format: "macButtonDeleteTunnels (%d)", tunnels.count))
             multiSelectionVC.onButtonClicked = { [weak tunnelsListVC] in
                 tunnelsListVC?.handleRemoveTunnelAction()
             }
@@ -130,6 +130,18 @@ extension ManageTunnelsRootViewController {
             return tunnelDetailVC
         default:
             return super.supplementalTarget(forAction: action, sender: sender)
+        }
+    }
+}
+
+extension ManageTunnelsRootViewController {
+    override func keyDown(with event: NSEvent) {
+        let cmdFKeyPressed = event.modifierFlags.contains(.command) && event.keyCode == 3
+
+        if cmdFKeyPressed {
+            tunnelsListVC?.searchBar.becomeFirstResponder()
+        } else {
+            super.keyDown(with: event)
         }
     }
 }
