@@ -1,0 +1,53 @@
+{
+  "fill" : {
+    "solid" : "display-p3:0.53333,0.09020,0.10196,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill-specializations" : [
+            {
+              "value" : {
+                "solid" : "srgb:1.00000,1.00000,1.00000,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "display-p3:0.53333,0.09020,0.10196,1.00000"
+              }
+            }
+          ],
+          "image-name" : "path1.png",
+          "name" : "icon",
+          "position" : {
+            "scale" : 2.7,
+            "translation-in-points" : [
+              -32.47857740011864,
+              5.573680011961778
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : [
+      "iOS",
+      "macOS"
+    ]
+  }
+}
