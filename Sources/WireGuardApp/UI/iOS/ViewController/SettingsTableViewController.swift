@@ -22,11 +22,18 @@ class SettingsTableViewController: UITableViewController {
         }
     }
 
+    #if os(tvOS)
+    let settingsFieldsBySection: [[SettingsFields]] = [
+        [.iosAppVersion, .goBackendVersion],
+        [.viewLog]
+    ]
+    #else
     let settingsFieldsBySection: [[SettingsFields]] = [
         [.iosAppVersion, .goBackendVersion],
         [.exportZipArchive],
         [.viewLog]
     ]
+    #endif
 
     let tunnelsManager: TunnelsManager?
     var wireguardCaptionedImage: (view: UIView, size: CGSize)?
@@ -47,7 +54,11 @@ class SettingsTableViewController: UITableViewController {
 
         tableView.estimatedRowHeight = 44
         tableView.rowHeight = UITableView.automaticDimension
+        #if os(tvOS)
+        tableView.allowsSelection = true
+        #else
         tableView.allowsSelection = false
+        #endif
 
         tableView.register(KeyValueCell.self)
         tableView.register(ButtonCell.self)
@@ -86,6 +97,9 @@ class SettingsTableViewController: UITableViewController {
     }
 
     func exportConfigurationsAsZipFile(sourceView: UIView) {
+        #if os(tvOS)
+        fatalError("Unsupported")
+        #else
         PrivateDataConfirmation.confirmAccess(to: tr("iosExportPrivateData")) { [weak self] in
             guard let self = self else { return }
             guard let tunnelsManager = self.tunnelsManager else { return }
@@ -106,12 +120,12 @@ class SettingsTableViewController: UITableViewController {
                 self?.present(fileExportVC, animated: true, completion: nil)
             }
         }
+        #endif
     }
 
     func presentLogView() {
         let logVC = LogViewController()
         navigationController?.pushViewController(logVC, animated: true)
-
     }
 }
 
@@ -129,7 +143,11 @@ extension SettingsTableViewController {
         case 0:
             return tr("settingsSectionTitleAbout")
         case 1:
+            #if os(tvOS)
+            return tr("settingsSectionTitleTunnelLog")
+            #else
             return tr("settingsSectionTitleExportConfigurations")
+            #endif
         case 2:
             return tr("settingsSectionTitleTunnelLog")
         default:
@@ -161,13 +179,35 @@ extension SettingsTableViewController {
             }
             return cell
         } else if field == .viewLog {
+            #if os(tvOS)
+            let cell = UITableViewCell()
+            cell.textLabel?.text = field.localizedUIString
+            cell.textLabel?.textAlignment = .center
+            cell.selectionStyle = .default
+            #else
             let cell: ButtonCell = tableView.dequeueReusableCell(for: indexPath)
             cell.buttonText = field.localizedUIString
             cell.onTapped = { [weak self] in
                 self?.presentLogView()
             }
+            #endif
             return cell
         }
         fatalError()
     }
+
+    #if os(tvOS)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let field = settingsFieldsBySection[indexPath.section][indexPath.row]
+
+        if case .viewLog = field {
+            presentLogView()
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
+        let field = settingsFieldsBySection[indexPath.section][indexPath.row]
+        return field == .viewLog
+    }
+    #endif
 }

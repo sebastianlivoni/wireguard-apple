@@ -4,10 +4,23 @@
 import UIKit
 import MobileCoreServices
 import UserNotifications
+import Network
+import DeviceDiscoveryUI
 
-class TunnelsListTableViewController: UIViewController {
+class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
 
     var tunnelsManager: TunnelsManager?
+    var connectionManager: ConnectionManager
+
+    init(connectionManager: ConnectionManager) {
+        self.connectionManager = connectionManager
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     enum TableState: Equatable {
         case normal
@@ -19,8 +32,11 @@ class TunnelsListTableViewController: UIViewController {
         let tableView = UITableView(frame: CGRect.zero, style: .plain)
         tableView.estimatedRowHeight = 60
         tableView.rowHeight = UITableView.automaticDimension
+        #if !os(tvOS)
         tableView.separatorStyle = .none
+        #endif
         tableView.register(TunnelListCell.self)
+        tableView.clipsToBounds = false
         return tableView
     }()
 
@@ -47,16 +63,27 @@ class TunnelsListTableViewController: UIViewController {
 
     override func loadView() {
         view = UIView()
+        #if os(tvOS)
+        view.backgroundColor = .clear
+        #else
         view.backgroundColor = .systemBackground
+        #endif
 
         tableView.dataSource = self
         tableView.delegate = self
 
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
+
+        #if os(tvOS)
+        let constant: CGFloat = -80
+        #else
+        let constant: CGFloat = 0
+        #endif
+
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: constant),
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
@@ -81,6 +108,8 @@ class TunnelsListTableViewController: UIViewController {
         }
 
         busyIndicator.startAnimating()
+
+        connectionManager.delegate = self
     }
 
     override func viewDidLoad() {
@@ -110,7 +139,9 @@ class TunnelsListTableViewController: UIViewController {
         if case .multiSelect(let selectionCount) = tableState, selectionCount > 0 {
             navigationItem.title = tr(format: "tunnelsListSelectedTitle (%d)", selectionCount)
         } else {
+            #if !os(tvOS)
             navigationItem.title = tr("tunnelsListTitle")
+            #endif
         }
         if case .multiSelect = tableState {
             tableView.allowsMultipleSelectionDuringEditing = true
@@ -134,9 +165,26 @@ class TunnelsListTableViewController: UIViewController {
         }
     }
 
+    #if os(tvOS)
+    func presentWaitingAddTunnel() {
+        let addTunnelVC = AddTunnelViewController()
+        let addTunnelNC = UINavigationController(rootViewController: addTunnelVC)
+        addTunnelVC.modalPresentationStyle = .automatic
+        present(addTunnelNC, animated: true)
+    }
+    #endif
+
     @objc func addButtonTapped(sender: AnyObject) {
         guard tunnelsManager != nil else { return }
 
+        #if os(tvOS)
+        if connectionManager.isConnected {
+            connectionManager.send(type: .requestAddConfiguration)
+            presentWaitingAddTunnel()
+        } else {
+            presentDevicePickerFullScreen()
+        }
+        #else
         let alert = UIAlertController(title: "", message: tr("addTunnelMenuHeader"), preferredStyle: .actionSheet)
         let importFileAction = UIAlertAction(title: tr("addTunnelMenuImportFile"), style: .default) { [weak self] _ in
             self?.presentViewControllerForFileImport()
@@ -165,6 +213,7 @@ class TunnelsListTableViewController: UIViewController {
             alert.popoverPresentationController?.sourceRect = sender.bounds
         }
         present(alert, animated: true, completion: nil)
+        #endif
     }
 
     @objc func settingsButtonTapped(sender: UIBarButtonItem) {
@@ -172,30 +221,90 @@ class TunnelsListTableViewController: UIViewController {
 
         let settingsVC = SettingsTableViewController(tunnelsManager: tunnelsManager)
         let settingsNC = UINavigationController(rootViewController: settingsVC)
+        #if os(tvOS)
+        settingsNC.modalPresentationStyle = .automatic
+        #else
         settingsNC.modalPresentationStyle = .formSheet
+        #endif
         present(settingsNC, animated: true)
     }
 
+    #if os(tvOS)
+    func presentDevicePickerFullScreen() {
+        guard let windowScene = view.window?.windowScene else { return }
+        guard let rootVC = windowScene.windows.first?.rootViewController else { return }
+
+        let parameters = NWParameters.applicationService
+        let browseDescriptor = NWBrowser.Descriptor.applicationService(name: "WireGuardAddTunnel")
+
+        guard let devicePickerController = DDDevicePickerViewController(browseDescriptor: browseDescriptor, parameters: parameters) else { return }
+        devicePickerController.modalPresentationStyle = .fullScreen
+        devicePickerController.modalTransitionStyle = .coverVertical
+
+        rootVC.present(devicePickerController, animated: true)
+
+        Task {
+            do {
+                let endpoint = try await devicePickerController.endpoint
+                connectionManager.connect(to: endpoint)
+                connectionManager.send(type: .requestAddConfiguration)
+                presentWaitingAddTunnel()
+            } catch {
+                print("Device picker canceled")
+            }
+        }
+    }
+    #endif
+
+    #if !os(tvOS)
+    func presentAddTunnelAppleTV(connectionManager: ConnectionManager) {
+        guard let tunnelsManager = tunnelsManager else { return }
+
+        let addTunnelVC = AddTunnelAppleTVViewController(connectionManager: connectionManager, tunnelsManager: tunnelsManager)
+
+        let addTunnelNC = UINavigationController(rootViewController: addTunnelVC)
+        addTunnelNC.modalPresentationStyle = .formSheet
+        addTunnelNC.presentationController?.delegate = self
+        present(addTunnelNC, animated: true)
+    }
+
+    func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
+        connectionManager.send(type: .error)
+    }
+    #endif
+
     func presentViewControllerForTunnelCreation(tunnelsManager: TunnelsManager) {
+        #if os(tvOS)
+        fatalError("Not supportd")
+        #else
         let editVC = TunnelEditTableViewController(tunnelsManager: tunnelsManager)
         let editNC = UINavigationController(rootViewController: editVC)
         editNC.modalPresentationStyle = .fullScreen
         present(editNC, animated: true)
+        #endif
     }
 
     func presentViewControllerForFileImport() {
+        #if os(tvOS)
+        fatalError("Not supportd")
+        #else
         let documentTypes = ["com.wireguard.config.quick", String(kUTTypeText), String(kUTTypeZipArchive)]
         let filePicker = UIDocumentPickerViewController(documentTypes: documentTypes, in: .import)
         filePicker.delegate = self
         present(filePicker, animated: true)
+        #endif
     }
 
     func presentViewControllerForScanningQRCode() {
+        #if os(tvOS)
+        fatalError("Not supportd")
+        #else
         let scanQRCodeVC = QRScanViewController()
         scanQRCodeVC.delegate = self
         let scanQRCodeNC = UINavigationController(rootViewController: scanQRCodeVC)
         scanQRCodeNC.modalPresentationStyle = .fullScreen
         present(scanQRCodeNC, animated: true)
+        #endif
     }
 
     @objc func selectButtonTapped() {
@@ -272,6 +381,7 @@ class TunnelsListTableViewController: UIViewController {
     }
 }
 
+#if !os(tvOS)
 extension TunnelsListTableViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let tunnelsManager = tunnelsManager else { return }
@@ -292,6 +402,7 @@ extension TunnelsListTableViewController: QRScanViewControllerDelegate {
         }
     }
 }
+#endif
 
 extension TunnelsListTableViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -346,6 +457,7 @@ extension TunnelsListTableViewController: UITableViewDelegate {
         }
     }
 
+    #if !os(tvOS)
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: tr("tunnelsListSwipeDeleteButtonTitle")) { [weak self] _, _, completionHandler in
@@ -374,6 +486,7 @@ extension TunnelsListTableViewController: UITableViewDelegate {
             tableState = .normal
         }
     }
+    #endif
 }
 
 extension TunnelsListTableViewController: TunnelsManagerListDelegate {
@@ -398,14 +511,72 @@ extension TunnelsListTableViewController: TunnelsManagerListDelegate {
                 (splitViewController.viewControllers[0] as? UINavigationController)?.popToRootViewController(animated: false)
             } else {
                 let detailVC = UIViewController()
+                #if !os(tvOS)
                 detailVC.view.backgroundColor = .systemBackground
+                #endif
                 let detailNC = UINavigationController(rootViewController: detailVC)
                 splitViewController.showDetailViewController(detailNC, sender: self)
             }
             detailDisplayedTunnel = nil
+            #if !os(tvOS)
             if let presentedNavController = self.presentedViewController as? UINavigationController, presentedNavController.viewControllers.first is TunnelEditTableViewController {
                 self.presentedViewController?.dismiss(animated: false, completion: nil)
             }
+            #endif
+        }
+    }
+}
+
+extension TunnelsListTableViewController: ConnectionManagerDelegate {
+    func receive(message: Message) {
+        guard let tunnelsManager else { return }
+
+        switch message.type {
+        case .addConfiguration:
+            if let messagePayload = message.payload, let payload = try? JSONDecoder().decode(AddConfigurationPayload.self, from: messagePayload) {
+                do {
+                    let configurations: [TunnelConfiguration] = try payload.configs.map { configuration in
+                        let config = try TunnelConfiguration(fromWgQuickConfig: configuration.wgQuickConfig)
+
+                        config.name = configuration.name
+
+                        return config
+                    }
+
+                    tunnelsManager.addMultiple(tunnelConfigurations: configurations) { count, error in
+                        if let error {
+                            print("Kunne ikke tilføje tunneler: \(error)")
+                        } else {
+                            print("\(count) configs tilføjet")
+                        }
+
+                        self.presentedViewController?.dismiss(animated: true)
+                    }
+                } catch {
+                    print("Kunne ikke tilføje tunnel: \(error)")
+                }
+            }
+
+        case .editConfiguration:
+            break
+            /*if let messagePayload = message.payload, let payload = try? JSONDecoder().decode(EditConfigurationPayload.self, from: messagePayload) {
+                fatalError("Unsupported")
+            }*/
+
+        case .exportLogs:
+            if let messagePayload = message.payload {
+                //let payload = try? JSONDecoder().decode(ExportLogsPayload.self, from: messagePayload)
+                fatalError("Unsupported")
+            }
+
+        case .error:
+            presentedViewController?.dismiss(animated: true)
+        case .requestAddConfiguration:
+            #if !os(tvOS)
+            presentAddTunnelAppleTV(connectionManager: connectionManager)
+            #endif
+        case .requestEditConfiguration:
+            fatalError("Unsupported")
         }
     }
 }

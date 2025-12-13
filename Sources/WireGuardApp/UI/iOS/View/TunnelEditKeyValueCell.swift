@@ -9,7 +9,9 @@ class TunnelEditKeyValueCell: KeyValueCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         keyLabel.textAlignment = .right
+        #if !os(tvOS)
         valueTextField.textAlignment = .left
+        #endif
 
         let widthRatioConstraint = NSLayoutConstraint(item: keyLabel, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 0.4, constant: 0)
         // In case the key doesn't fit into 0.4 * width,
@@ -30,10 +32,12 @@ class TunnelEditEditableKeyValueCell: TunnelEditKeyValueCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         copyableGesture = false
+        valueLabelScrollView.isScrollEnabled = false
+        #if !os(tvOS)
         valueTextField.textColor = .label
         valueTextField.isEnabled = true
-        valueLabelScrollView.isScrollEnabled = false
         valueTextField.widthAnchor.constraint(equalTo: valueLabelScrollView.widthAnchor).isActive = true
+        #endif
     }
 
     required init?(coder aDecoder: NSCoder) {

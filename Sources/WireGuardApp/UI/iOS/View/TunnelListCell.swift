@@ -27,6 +27,22 @@ class TunnelListCell: UITableViewCell {
     }
     var onSwitchToggled: ((Bool) -> Void)?
 
+    #if os(tvOS)
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+
+        coordinator.addCoordinatedAnimations {
+            if self.isFocused {
+                self.nameLabel.textColor = .black
+                self.onDemandLabel.textColor = .darkGray
+            } else {
+                self.nameLabel.textColor = .label
+                self.onDemandLabel.textColor = .secondaryLabel
+            }
+        }
+    }
+    #endif
+
     let nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = UIFont.preferredFont(forTextStyle: .body)
@@ -52,7 +68,11 @@ class TunnelListCell: UITableViewCell {
         return busyIndicator
     }()
 
+    #if os(tvOS)
+    let statusSwitch = UIControl()
+    #else
     let statusSwitch = UISwitch()
+    #endif
 
     private var nameObservationToken: NSKeyValueObservation?
     private var statusObservationToken: NSKeyValueObservation?
@@ -64,6 +84,9 @@ class TunnelListCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        contentView.clipsToBounds = false
+        clipsToBounds = false
 
         accessoryType = .disclosureIndicator
 
@@ -115,7 +138,9 @@ class TunnelListCell: UITableViewCell {
     }
 
     @objc private func switchToggled() {
+        #if !os(tvOS)
         onSwitchToggled?(statusSwitch.isOn)
+        #endif
     }
 
     private func update(from tunnel: TunnelContainer?, animated: Bool) {
@@ -127,6 +152,7 @@ class TunnelListCell: UITableViewCell {
         let isOnDemandEngaged = tunnel.isActivateOnDemandEnabled
 
         let shouldSwitchBeOn = ((status != .deactivating && status != .inactive) || isOnDemandEngaged)
+        #if !os(tvOS)
         statusSwitch.setOn(shouldSwitchBeOn, animated: true)
 
         if isOnDemandEngaged && !(status == .activating || status == .active) {
@@ -136,11 +162,14 @@ class TunnelListCell: UITableViewCell {
         }
 
         statusSwitch.isUserInteractionEnabled = (status == .inactive || status == .active)
+        #endif
 
         if tunnel.hasOnDemandRules {
             onDemandLabel.text = isOnDemandEngaged ? tr("tunnelListCaptionOnDemand") : ""
             busyIndicator.stopAnimating()
+            #if !os(tvOS)
             statusSwitch.isUserInteractionEnabled = true
+            #endif
         } else {
             onDemandLabel.text = ""
             if status == .inactive || status == .active {
@@ -148,15 +177,19 @@ class TunnelListCell: UITableViewCell {
             } else {
                 busyIndicator.startAnimating()
             }
+            #if !os(tvOS)
             statusSwitch.isUserInteractionEnabled = (status == .inactive || status == .active)
+            #endif
         }
 
     }
 
     private func reset(animated: Bool) {
+        #if !os(tvOS)
         statusSwitch.thumbTintColor = nil
         statusSwitch.setOn(false, animated: animated)
         statusSwitch.isUserInteractionEnabled = false
+        #endif
         busyIndicator.stopAnimating()
     }
 }

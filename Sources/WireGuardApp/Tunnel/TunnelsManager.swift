@@ -20,7 +20,7 @@ protocol TunnelsManagerActivationDelegate: AnyObject {
 }
 
 class TunnelsManager {
-    private var tunnels: [TunnelContainer]
+    public var tunnels: [TunnelContainer]
     weak var tunnelsListDelegate: TunnelsManagerListDelegate?
     weak var activationDelegate: TunnelsManagerActivationDelegate?
     private var statusObservationToken: NotificationToken?
@@ -55,7 +55,7 @@ class TunnelsManager {
                 if proto.migrateConfigurationIfNeeded(called: tunnelManager.localizedDescription ?? "unknown") {
                     tunnelManager.saveToPreferences { _ in }
                 }
-                #if os(iOS)
+                #if os(iOS) || os(tvOS)
                 let passwordRef = proto.verifyConfigurationReference() ? proto.passwordReference : nil
                 #elseif os(macOS)
                 let passwordRef: Data?
@@ -305,7 +305,7 @@ class TunnelsManager {
         if tunnel.isTunnelAvailableToUser {
             (tunnelProviderManager.protocolConfiguration as? NETunnelProviderProtocol)?.destroyConfigurationReference()
         }
-        #elseif os(iOS)
+        #elseif os(iOS) || os(tvOS)
         (tunnelProviderManager.protocolConfiguration as? NETunnelProviderProtocol)?.destroyConfigurationReference()
         #else
         #error("Unimplemented")

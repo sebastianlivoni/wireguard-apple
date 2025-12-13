@@ -8,6 +8,10 @@ protocol TunnelEditTableViewControllerDelegate: AnyObject {
     func tunnelEditingCancelled()
 }
 
+protocol TunnelEditTableViewControllerDelegateAppleTV: AnyObject {
+    func tunnelSaved(tunnelConfiguration: TunnelConfiguration)
+}
+
 class TunnelEditTableViewController: UITableViewController {
     private enum Section {
         case interface
@@ -30,6 +34,8 @@ class TunnelEditTableViewController: UITableViewController {
     }
 
     weak var delegate: TunnelEditTableViewControllerDelegate?
+
+    weak var delegateAppleTV: TunnelEditTableViewControllerDelegateAppleTV?
 
     let interfaceFieldsBySection: [[TunnelViewModel.InterfaceField]] = [
         [.name],
@@ -125,14 +131,18 @@ class TunnelEditTableViewController: UITableViewController {
                     }
                 }
             } else {
-                // We're adding a new tunnel
-                tunnelsManager.add(tunnelConfiguration: tunnelConfiguration, onDemandOption: onDemandOption) { [weak self] result in
-                    switch result {
-                    case .failure(let error):
-                        ErrorPresenter.showErrorAlert(error: error, from: self)
-                    case .success(let tunnel):
-                        self?.dismiss(animated: true, completion: nil)
-                        self?.delegate?.tunnelSaved(tunnel: tunnel)
+                if self.delegateAppleTV != nil {
+                    self.delegateAppleTV?.tunnelSaved(tunnelConfiguration: tunnelConfiguration)
+                } else {
+                    // We're adding a new tunnel
+                    tunnelsManager.add(tunnelConfiguration: tunnelConfiguration, onDemandOption: onDemandOption) { [weak self] result in
+                        switch result {
+                        case .failure(let error):
+                            ErrorPresenter.showErrorAlert(error: error, from: self)
+                        case .success(let tunnel):
+                            self?.dismiss(animated: true, completion: nil)
+                            self?.delegate?.tunnelSaved(tunnel: tunnel)
+                        }
                     }
                 }
             }

@@ -22,6 +22,17 @@ class KeyValueCell: UITableViewCell {
         return scrollView
     }()
 
+    #if os(tvOS)
+    let valueLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .right
+        label.font = UIFont.preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 1
+        return label
+    }()
+    #else
     let valueTextField: UITextField = {
         let valueTextField = KeyValueCellTextField()
         valueTextField.textAlignment = .right
@@ -34,6 +45,21 @@ class KeyValueCell: UITableViewCell {
         valueTextField.textColor = .secondaryLabel
         return valueTextField
     }()
+    #endif
+
+    #if os(tvOS)
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+
+        if self.isFocused {
+            keyLabel.textColor = .black
+            valueLabel.textColor = .darkGray
+        } else {
+            keyLabel.textColor = .label
+            valueLabel.textColor = .secondaryLabel
+        }
+    }
+    #endif
 
     var copyableGesture = true
 
@@ -42,9 +68,23 @@ class KeyValueCell: UITableViewCell {
         set(value) { keyLabel.text = value }
     }
     var value: String {
-        get { return valueTextField.text ?? "" }
-        set(value) { valueTextField.text = value }
+        get {
+            #if os(tvOS)
+            return valueLabel.text ?? ""
+            #else
+            return valueTextField.text ?? ""
+            #endif
+        }
+        set {
+            #if os(tvOS)
+            valueLabel.text = newValue
+            #else
+            valueTextField.text = newValue
+            #endif
+        }
     }
+
+    #if !os(tvOS)
     var placeholderText: String {
         get { return valueTextField.placeholder ?? "" }
         set(value) { valueTextField.placeholder = value }
@@ -53,6 +93,7 @@ class KeyValueCell: UITableViewCell {
         get { return valueTextField.keyboardType }
         set(value) { valueTextField.keyboardType = value }
     }
+    #endif
 
     var isValueValid = true {
         didSet {
@@ -85,6 +126,15 @@ class KeyValueCell: UITableViewCell {
             keyLabel.topAnchor.constraint(equalToSystemSpacingBelow: contentView.layoutMarginsGuide.topAnchor, multiplier: 0.5)
         ])
 
+        #if os(tvOS)
+        contentView.addSubview(valueLabel)
+        valueLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            valueLabel.leadingAnchor.constraint(equalTo: keyLabel.trailingAnchor, constant: 8),
+            valueLabel.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+            valueLabel.centerYAnchor.constraint(equalTo: keyLabel.centerYAnchor)
+        ])
+        #else
         valueTextField.delegate = self
         valueLabelScrollView.addSubview(valueTextField)
         valueTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -98,6 +148,7 @@ class KeyValueCell: UITableViewCell {
         let expandToFitValueLabelConstraint = NSLayoutConstraint(item: valueTextField, attribute: .width, relatedBy: .equal, toItem: valueLabelScrollView, attribute: .width, multiplier: 1, constant: 0)
         expandToFitValueLabelConstraint.priority = .defaultLow + 1
         expandToFitValueLabelConstraint.isActive = true
+        #endif
 
         contentView.addSubview(valueLabelScrollView)
         valueLabelScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -161,9 +212,11 @@ class KeyValueCell: UITableViewCell {
 
         if let recognizerView = recognizer.view,
             let recognizerSuperView = recognizerView.superview, recognizerView.becomeFirstResponder() {
+            #if !os(tvOS)
             let menuController = UIMenuController.shared
             menuController.setTargetRect(detailTextLabel?.frame ?? recognizerView.frame, in: detailTextLabel?.superview ?? recognizerSuperView)
             menuController.setMenuVisible(true, animated: true)
+            #endif
         }
     }
 
@@ -175,16 +228,20 @@ class KeyValueCell: UITableViewCell {
         return (action == #selector(UIResponderStandardEditActions.copy(_:)))
     }
 
+    #if !os(tvOS)
     override func copy(_ sender: Any?) {
         UIPasteboard.general.string = valueTextField.text
     }
+    #endif
 
     override func prepareForReuse() {
         super.prepareForReuse()
         copyableGesture = true
+        #if !os(tvOS)
         placeholderText = ""
-        isValueValid = true
         keyboardType = .default
+        #endif
+        isValueValid = true
         onValueChanged = nil
         onValueBeingEdited = nil
         observationToken = nil

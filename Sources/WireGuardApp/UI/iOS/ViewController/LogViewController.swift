@@ -1,13 +1,15 @@
-// SPDX-License-Identifier: MIT
-// Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
-
 import UIKit
 
 class LogViewController: UIViewController {
 
     let textView: UITextView = {
         let textView = UITextView()
+        #if os(tvOS)
+        textView.isUserInteractionEnabled = true
+        textView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        #else
         textView.isEditable = false
+        #endif
         textView.isSelectable = true
         textView.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)
         textView.adjustsFontForContentSizeCategory = true
@@ -35,7 +37,9 @@ class LogViewController: UIViewController {
 
     override func loadView() {
         view = UIView()
+        #if !os(tvOS)
         view.backgroundColor = .systemBackground
+        #endif
         view.addSubview(textView)
         textView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -52,11 +56,37 @@ class LogViewController: UIViewController {
             busyIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
 
-        busyIndicator.startAnimating()
+        #if os(tvOS)
+        if let navBar = navigationController?.navigationBar {
+            navBar.isTranslucent = true
+            navBar.setBackgroundImage(UIImage(), for: .default)
+            navBar.shadowImage = UIImage()
+            navBar.backgroundColor = .clear
 
+            let blurEffect = UIBlurEffect(style: .regular)
+            let blurView = UIVisualEffectView(effect: blurEffect)
+            blurView.frame = navBar.bounds
+            blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            navBar.insertSubview(blurView, at: 0)
+            navBarBlurView = blurView
+        }
+        #endif
+
+        busyIndicator.startAnimating()
         logViewHelper = LogViewHelper(logFilePath: FileManager.logFileURL?.path)
         startUpdatingLogEntries()
     }
+
+    #if os(tvOS)
+    private var navBarBlurView: UIVisualEffectView?
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        navBarBlurView?.removeFromSuperview()
+        navBarBlurView = nil
+    }
+    #endif
 
     override func viewDidLoad() {
         title = tr("logViewTitle")
@@ -81,7 +111,11 @@ class LogViewController: UIViewController {
             let bodyFont = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)
             let captionFont = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.caption1)
             for logEntry in fetchedLogEntries {
+                #if os(tvOS)
+                let bgColor: UIColor = .clear
+                #else
                 let bgColor: UIColor = self.isNextLineHighlighted ? .systemGray3 : .systemBackground
+                #endif
                 let fgColor: UIColor = .label
                 let timestampText = NSAttributedString(string: logEntry.timestamp + "\n", attributes: [.font: captionFont, .backgroundColor: bgColor, .foregroundColor: fgColor, .paragraphStyle: self.paragraphStyle])
                 let messageText = NSAttributedString(string: logEntry.message + "\n", attributes: [.font: bodyFont, .backgroundColor: bgColor, .foregroundColor: fgColor, .paragraphStyle: self.paragraphStyle])
@@ -132,6 +166,7 @@ class LogViewController: UIViewController {
                     ErrorPresenter.showErrorAlert(title: tr("alertUnableToWriteLogTitle"), message: tr("alertUnableToWriteLogMessage"), from: self)
                     return
                 }
+                #if !os(tvOS)
                 let activityVC = UIActivityViewController(activityItems: [destinationURL], applicationActivities: nil)
                 if let sender = sender as? UIBarButtonItem {
                     activityVC.popoverPresentationController?.barButtonItem = sender
@@ -141,6 +176,7 @@ class LogViewController: UIViewController {
                     _ = FileManager.deleteFile(at: destinationURL)
                 }
                 self.present(activityVC, animated: true)
+                #endif
             }
         }
     }
