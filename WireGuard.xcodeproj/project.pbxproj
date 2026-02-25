@@ -83,7 +83,6 @@
 		6B5CA6B1220DE4E900F126CF /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FF4AC462120B9E0002C96EB /* NetworkExtension.framework */; };
 		6B5CA6B2220DE4F400F126CF /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FB1BDB621D4F8B800A991BF /* NetworkExtension.framework */; };
 		6B62E45F220A6FA900EF34A6 /* PrivateDataConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B62E45E220A6FA900EF34A6 /* PrivateDataConfirmation.swift */; };
-		6B62E460220A6FA900EF34A6 /* PrivateDataConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B62E45E220A6FA900EF34A6 /* PrivateDataConfirmation.swift */; };
 		6B653B86220DE2960050E69C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FF4AC462120B9E0002C96EB /* NetworkExtension.framework */; };
 		6B6956362211DA80001B618A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B6956352211DA80001B618A /* main.m */; };
 		6B707D8421F918D4000A8F73 /* TunnelConfiguration+UapiConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B707D8321F918D4000A8F73 /* TunnelConfiguration+UapiConfig.swift */; };
@@ -299,6 +298,12 @@
 		969B9A612EEB73C000275607 /* AddTunnelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969B9A602EEB73BC00275607 /* AddTunnelViewController.swift */; };
 		96C66A5E2EE99293003B2C73 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96994B432EE9925300A1F8BC /* Assets.xcassets */; };
 		96D6D7132EECD6E800C788E4 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D6D7122EECD6E600C788E4 /* SwitchCell.swift */; };
+		96E10CFB2EEE16C50030E296 /* TunnelEditTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7774F221774263006A79B3 /* TunnelEditTableViewController.swift */; };
+		96E10CFC2EEE16E50030E296 /* SSIDOptionEditTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8F0D7622267C57000E8335 /* SSIDOptionEditTableViewController.swift */; };
+		96E10CFD2EEE16F10030E296 /* EditableTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0F44CA222D55FD00B0FF04 /* EditableTextCell.swift */; };
+		96E10CFE2EEE186C0030E296 /* PrivateDataConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B62E45E220A6FA900EF34A6 /* PrivateDataConfirmation.swift */; };
+		96E10CFF2EEE18700030E296 /* PrivateDataConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B62E45E220A6FA900EF34A6 /* PrivateDataConfirmation.swift */; };
+		96E10D012EEE195F0030E296 /* TVTextEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E10D002EEE195E0030E296 /* TVTextEditViewController.swift */; };
 		96E963B82EE9D2E800565B01 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5C5E26220A48D30024272E /* Keychain.swift */; };
 		96E963B92EE9D2E800565B01 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5C5E26220A48D30024272E /* Keychain.swift */; };
 		96F71B952EA19CE3004CAEC1 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 96F71B942EA19CE3004CAEC1 /* AppIcon.icon */; };
@@ -592,6 +597,7 @@
 		96B220532BD6FE4100B8D19B /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = Sources/WireGuardApp/da.lproj/Localizable.strings; sourceTree = "<group>"; };
 		96C9E1A42EE9A6A6009E0C34 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		96D6D7122EECD6E600C788E4 /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
+		96E10D002EEE195E0030E296 /* TVTextEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVTextEditViewController.swift; sourceTree = "<group>"; };
 		96ECB4D92EE9D7BA000691E1 /* TunnelDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelDetailView.swift; sourceTree = "<group>"; };
 		96F71B942EA19CE3004CAEC1 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -997,6 +1003,7 @@
 		96994B392EE98ADF00A1F8BC /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				96E10D002EEE195E0030E296 /* TVTextEditViewController.swift */,
 				96D6D7122EECD6E600C788E4 /* SwitchCell.swift */,
 				965189762EECB79F00F92626 /* LogViewController.swift */,
 				969B9A602EEB73BC00275607 /* AddTunnelViewController.swift */,
@@ -1694,7 +1701,6 @@
 				6FB1BDD921D50F5300A991BF /* LocalizationHelper.swift in Sources */,
 				585B10602577E293004F691E /* PeerConfiguration.swift in Sources */,
 				6F89E17C21F090CC00C97BB9 /* TunnelsTracker.swift in Sources */,
-				6B62E460220A6FA900EF34A6 /* PrivateDataConfirmation.swift in Sources */,
 				6FCD99B121E0EDA900BA4C82 /* TunnelEditViewController.swift in Sources */,
 				6FB17946222FD5960018AE71 /* OnDemandWiFiControls.swift in Sources */,
 				6FB1BDBB21D50F0200A991BF /* Localizable.strings in Sources */,
@@ -1718,6 +1724,7 @@
 				6F1075642258AE9800D78929 /* DeleteTunnelsConfirmationAlert.swift in Sources */,
 				6FBA101821D656000051C35F /* StatusMenu.swift in Sources */,
 				6F613D9B21DE33B8004B217A /* KeyValueRow.swift in Sources */,
+				96E10CFF2EEE18700030E296 /* PrivateDataConfirmation.swift in Sources */,
 				585B10802577E294004F691E /* PrivateKey.swift in Sources */,
 				6FB1BDC121D50F0200A991BF /* String+ArrayConversion.swift in Sources */,
 				5F52D0BB21E3781B00283CEA /* ConfTextView.swift in Sources */,
@@ -1843,6 +1850,7 @@
 			files = (
 				96994ABB2EE989C100A1F8BC /* LocalizationHelper.swift in Sources */,
 				96994ABD2EE989C100A1F8BC /* InterfaceConfiguration.swift in Sources */,
+				96E10D012EEE195F0030E296 /* TVTextEditViewController.swift in Sources */,
 				96994ABE2EE989C100A1F8BC /* ringlogger.c in Sources */,
 				96994AC02EE989C100A1F8BC /* PeerConfiguration.swift in Sources */,
 				96994AC12EE989C100A1F8BC /* Logger.swift in Sources */,
@@ -1884,6 +1892,7 @@
 				963FB5AE2EEA2747000F0D27 /* SSIDOptionDetailTableViewController.swift in Sources */,
 				963FB5AF2EEA2747000F0D27 /* BorderedTextButton.swift in Sources */,
 				963FB5B02EEA2747000F0D27 /* TunnelListCell.swift in Sources */,
+				96E10CFC2EEE16E50030E296 /* SSIDOptionEditTableViewController.swift in Sources */,
 				963FB5B12EEA2747000F0D27 /* KeyValueCell.swift in Sources */,
 				963FB5B22EEA2747000F0D27 /* ErrorPresenter.swift in Sources */,
 				969B9A612EEB73C000275607 /* AddTunnelViewController.swift in Sources */,
@@ -1893,12 +1902,15 @@
 				963FB5B52EEA2747000F0D27 /* ButtonCell.swift in Sources */,
 				96994AF12EE989C100A1F8BC /* TunnelConfiguration+UapiConfig.swift in Sources */,
 				965189782EECBCFC00F92626 /* LogViewController.swift in Sources */,
+				96E10CFD2EEE16F10030E296 /* EditableTextCell.swift in Sources */,
+				96E10CFE2EEE186C0030E296 /* PrivateDataConfirmation.swift in Sources */,
 				9630E2A72EE9E46600B3DB9B /* ServerModel.swift in Sources */,
 				96994AF42EE989C100A1F8BC /* TunnelConfiguration.swift in Sources */,
 				96994AF62EE989C100A1F8BC /* ActivateOnDemandOption.swift in Sources */,
 				963FB5A32EEA272E000F0D27 /* TunnelsListTableViewController.swift in Sources */,
 				96994AF72EE989C100A1F8BC /* String+ArrayConversion.swift in Sources */,
 				96994AF82EE989C100A1F8BC /* Endpoint.swift in Sources */,
+				96E10CFB2EEE16C50030E296 /* TunnelEditTableViewController.swift in Sources */,
 				963FB5A02EEA270C000F0D27 /* TunnelDetailTableViewController.swift in Sources */,
 				96E963B82EE9D2E800565B01 /* Keychain.swift in Sources */,
 			);

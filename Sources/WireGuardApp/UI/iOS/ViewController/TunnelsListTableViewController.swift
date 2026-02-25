@@ -274,14 +274,14 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
     #endif
 
     func presentViewControllerForTunnelCreation(tunnelsManager: TunnelsManager) {
-        #if os(tvOS)
-        fatalError("Not supportd")
-        #else
+        //#if os(tvOS)
+        //fatalError("Not supportd")
+        //#else
         let editVC = TunnelEditTableViewController(tunnelsManager: tunnelsManager)
         let editNC = UINavigationController(rootViewController: editVC)
         editNC.modalPresentationStyle = .fullScreen
         present(editNC, animated: true)
-        #endif
+        //#endif
     }
 
     func presentViewControllerForFileImport() {

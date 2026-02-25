@@ -38,6 +38,10 @@ class TunnelEditEditableKeyValueCell: TunnelEditKeyValueCell {
         valueTextField.isEnabled = true
         valueTextField.widthAnchor.constraint(equalTo: valueLabelScrollView.widthAnchor).isActive = true
         #endif
+
+        #if os(tvOS)
+        valueTextField.isUserInteractionEnabled = true
+        #endif
     }
 
     required init?(coder aDecoder: NSCoder) {

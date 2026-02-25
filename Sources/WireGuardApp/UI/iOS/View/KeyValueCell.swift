@@ -22,7 +22,6 @@ class KeyValueCell: UITableViewCell {
         return scrollView
     }()
 
-    #if os(tvOS)
     let valueLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .right
@@ -32,7 +31,7 @@ class KeyValueCell: UITableViewCell {
         label.numberOfLines = 1
         return label
     }()
-    #else
+
     let valueTextField: UITextField = {
         let valueTextField = KeyValueCellTextField()
         valueTextField.textAlignment = .right
@@ -45,7 +44,6 @@ class KeyValueCell: UITableViewCell {
         valueTextField.textColor = .secondaryLabel
         return valueTextField
     }()
-    #endif
 
     #if os(tvOS)
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
@@ -84,7 +82,6 @@ class KeyValueCell: UITableViewCell {
         }
     }
 
-    #if !os(tvOS)
     var placeholderText: String {
         get { return valueTextField.placeholder ?? "" }
         set(value) { valueTextField.placeholder = value }
@@ -93,7 +90,6 @@ class KeyValueCell: UITableViewCell {
         get { return valueTextField.keyboardType }
         set(value) { valueTextField.keyboardType = value }
     }
-    #endif
 
     var isValueValid = true {
         didSet {

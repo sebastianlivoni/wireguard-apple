@@ -194,16 +194,20 @@ extension TunnelEditTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell
         switch sections[indexPath.section] {
         case .interface:
-            return interfaceFieldCell(for: tableView, at: indexPath)
+            cell = interfaceFieldCell(for: tableView, at: indexPath)
         case .peer(let peerData):
-            return peerCell(for: tableView, at: indexPath, with: peerData)
+            cell = peerCell(for: tableView, at: indexPath, with: peerData)
         case .addPeer:
-            return addPeerCell(for: tableView, at: indexPath)
+            cell = addPeerCell(for: tableView, at: indexPath)
         case .onDemand:
-            return onDemandCell(for: tableView, at: indexPath)
+            cell = onDemandCell(for: tableView, at: indexPath)
         }
+
+        cell.isUserInteractionEnabled = true
+        return cell
     }
 
     private func interfaceFieldCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
@@ -348,7 +352,9 @@ extension TunnelEditTableViewController {
 
     private func excludePrivateIPsCell(for tableView: UITableView, at indexPath: IndexPath, peerData: TunnelViewModel.PeerData, field: TunnelViewModel.PeerField) -> UITableViewCell {
         let cell: SwitchCell = tableView.dequeueReusableCell(for: indexPath)
+        #if !os(tvOS)
         cell.message = field.localizedUIString
+        #endif
         cell.isEnabled = peerData.shouldAllowExcludePrivateIPsControl
         cell.isOn = peerData.excludePrivateIPsValue
         cell.onSwitchToggled = { [weak self] isOn in
@@ -440,7 +446,9 @@ extension TunnelEditTableViewController {
         let field = onDemandFields[indexPath.row]
         if indexPath.row < 2 {
             let cell: SwitchCell = tableView.dequeueReusableCell(for: indexPath)
+            #if !os(tvOS)
             cell.message = field.localizedUIString
+            #endif
             cell.isOn = onDemandViewModel.isEnabled(field: field)
             cell.onSwitchToggled = { [weak self] isOn in
                 guard let self = self else { return }
@@ -480,14 +488,46 @@ extension TunnelEditTableViewController {
 
 extension TunnelEditTableViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if case .onDemand = sections[indexPath.section], indexPath.row == 2 {
+        #if os(tvOS)
+        switch sections[indexPath.section] {
+        case .interface, .peer:
             return indexPath
-        } else {
+        case .onDemand:
+            return indexPath
+        default:
             return nil
         }
+        #else
+        if case .onDemand = sections[indexPath.section], indexPath.row == 2 {
+            return indexPath
+        }
+        return nil
+        #endif
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("hejsa")
+        #if os(tvOS)
+        /*guard case .interface = sections[indexPath.section] else { return }
+
+        let field = interfaceFieldsBySection[indexPath.section][indexPath.row]
+
+        let editor = TVTextEditViewController(
+            title: field.localizedUIString,
+            initialValue: tunnelViewModel.interfaceData[field],
+            placeholder: tr("tunnelEditPlaceholderTextOptional")
+        )
+
+        editor.onSave = { [weak self] value in
+            if let value {
+                self?.tunnelViewModel.interfaceData[field] = value
+            }
+            tableView.reloadRows(at: [indexPath], with: .none)
+        }
+
+        navigationController?.pushViewController(editor, animated: true)
+        return*/
+        #else
         switch sections[indexPath.section] {
         case .onDemand:
             assert(indexPath.row == 2)
@@ -498,8 +538,10 @@ extension TunnelEditTableViewController {
         default:
             assertionFailure()
         }
+        #endif
     }
 }
+
 
 extension TunnelEditTableViewController: SSIDOptionEditTableViewControllerDelegate {
     func ssidOptionSaved(option: ActivateOnDemandViewModel.OnDemandSSIDOption, ssids: [String]) {

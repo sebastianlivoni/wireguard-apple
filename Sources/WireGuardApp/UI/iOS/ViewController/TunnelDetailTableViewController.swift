@@ -115,9 +115,6 @@ class TunnelDetailTableViewController: UITableViewController {
     }
 
     @objc func editTapped() {
-        #if os(tvOS)
-        fatalError("Not supportd")
-        #else
         PrivateDataConfirmation.confirmAccess(to: tr("iosViewPrivateData")) { [weak self] in
             guard let self = self else { return }
             let editVC = TunnelEditTableViewController(tunnelsManager: self.tunnelsManager, tunnel: self.tunnel)
@@ -126,7 +123,6 @@ class TunnelDetailTableViewController: UITableViewController {
             editNC.modalPresentationStyle = .fullScreen
             self.present(editNC, animated: true)
         }
-        #endif
     }
 
     func startUpdatingRuntimeConfiguration() {
@@ -260,7 +256,6 @@ class TunnelDetailTableViewController: UITableViewController {
     }
 }
 
-#if !os(tvOS)
 extension TunnelDetailTableViewController: TunnelEditTableViewControllerDelegate {
     func tunnelSaved(tunnel: TunnelContainer) {
         tunnelViewModel = TunnelViewModel(tunnelConfiguration: tunnel.tunnelConfiguration)
@@ -275,7 +270,6 @@ extension TunnelDetailTableViewController: TunnelEditTableViewControllerDelegate
         // Nothing to do
     }
 }
-#endif
 
 extension TunnelDetailTableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {

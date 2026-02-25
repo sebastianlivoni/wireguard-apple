@@ -9,6 +9,9 @@ import AppKit
 
 class PrivateDataConfirmation {
     static func confirmAccess(to reason: String, _ after: @escaping () -> Void) {
+        #if os(tvOS)
+        after()
+        #else
         let context = LAContext()
 
         var error: NSError?
@@ -33,5 +36,6 @@ class PrivateDataConfirmation {
                 }
             }
         }
+        #endif
     }
 }
