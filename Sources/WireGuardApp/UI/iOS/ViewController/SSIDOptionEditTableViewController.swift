@@ -263,7 +263,7 @@ extension SSIDOptionEditTableViewController {
     private func getConnectedSSID(completionHandler: @escaping (String?) -> Void) {
         #if targetEnvironment(simulator)
         completionHandler("Simulator Wi-Fi")
-        #else
+        #elseif !os(tvOS)
         NEHotspotNetwork.fetchCurrent { hotspotNetwork in
             completionHandler(hotspotNetwork?.ssid)
         }

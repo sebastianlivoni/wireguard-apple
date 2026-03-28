@@ -215,6 +215,7 @@
 
 "settingsSectionTitleAbout" = "Om";
 "settingsVersionKeyWireGuardForIOS" = "WireGuard til iOS";
+"settingsVersionKeyWireGuardFortvOS" = "WireGuard til tvOS";
 "settingsVersionKeyWireGuardGoBackend" = "WireGuard Go Backend";
 
 "settingsSectionTitleExportConfigurations" = "Eksportér konfigurationer";

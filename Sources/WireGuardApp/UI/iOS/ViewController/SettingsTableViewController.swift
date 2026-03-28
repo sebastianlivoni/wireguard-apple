@@ -7,14 +7,18 @@ import os.log
 class SettingsTableViewController: UITableViewController {
 
     enum SettingsFields {
-        case iosAppVersion
+        case appVersion
         case goBackendVersion
         case exportZipArchive
         case viewLog
 
         var localizedUIString: String {
             switch self {
-            case .iosAppVersion: return tr("settingsVersionKeyWireGuardForIOS")
+            #if os(tvOS)
+            case .appVersion: return tr("settingsVersionKeyWireGuardFortvOS")
+            #else
+            case .appVersion: return tr("settingsVersionKeyWireGuardForIOS")
+            #endif
             case .goBackendVersion: return tr("settingsVersionKeyWireGuardGoBackend")
             case .exportZipArchive: return tr("settingsExportZipButtonTitle")
             case .viewLog: return tr("settingsViewLogButtonTitle")
@@ -24,12 +28,12 @@ class SettingsTableViewController: UITableViewController {
 
     #if os(tvOS)
     let settingsFieldsBySection: [[SettingsFields]] = [
-        [.iosAppVersion, .goBackendVersion],
+        [.appVersion, .goBackendVersion],
         [.viewLog]
     ]
     #else
     let settingsFieldsBySection: [[SettingsFields]] = [
-        [.iosAppVersion, .goBackendVersion],
+        [.appVersion, .goBackendVersion],
         [.exportZipArchive],
         [.viewLog]
     ]
@@ -157,11 +161,11 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let field = settingsFieldsBySection[indexPath.section][indexPath.row]
-        if field == .iosAppVersion || field == .goBackendVersion {
+        if field == .appVersion || field == .goBackendVersion {
             let cell: KeyValueCell = tableView.dequeueReusableCell(for: indexPath)
             cell.copyableGesture = false
             cell.key = field.localizedUIString
-            if field == .iosAppVersion {
+            if field == .appVersion {
                 var appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown version"
                 if let appBuild = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
                     appVersion += " (\(appBuild))"

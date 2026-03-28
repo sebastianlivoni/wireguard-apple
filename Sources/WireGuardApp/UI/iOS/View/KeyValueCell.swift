@@ -53,8 +53,24 @@ class KeyValueCell: UITableViewCell {
             keyLabel.textColor = .black
             valueLabel.textColor = .darkGray
         } else {
+            // Only commit and hide if we're not currently editing
+            guard !valueTextField.isFirstResponder else { return }
             keyLabel.textColor = .label
             valueLabel.textColor = .secondaryLabel
+            if let text = valueTextField.text {
+                valueLabel.text = text
+            }
+            valueTextField.isHidden = true
+            valueLabel.isHidden = false
+        }
+    }
+
+    func beginEditing() {
+        valueTextField.text = valueLabel.text
+        valueTextField.isHidden = false
+        valueLabel.isHidden = true
+        DispatchQueue.main.async {
+            self.valueTextField.becomeFirstResponder()
         }
     }
     #endif
@@ -76,6 +92,7 @@ class KeyValueCell: UITableViewCell {
         set {
             #if os(tvOS)
             valueLabel.text = newValue
+            valueTextField.text = newValue
             #else
             valueTextField.text = newValue
             #endif
@@ -129,6 +146,16 @@ class KeyValueCell: UITableViewCell {
             valueLabel.leadingAnchor.constraint(equalTo: keyLabel.trailingAnchor, constant: 8),
             valueLabel.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
             valueLabel.centerYAnchor.constraint(equalTo: keyLabel.centerYAnchor)
+        ])
+
+        valueTextField.isHidden = true
+        valueTextField.isEnabled = true
+        contentView.addSubview(valueTextField)
+        valueTextField.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            valueTextField.leadingAnchor.constraint(equalTo: valueLabel.leadingAnchor),
+            valueTextField.trailingAnchor.constraint(equalTo: valueLabel.trailingAnchor),
+            valueTextField.centerYAnchor.constraint(equalTo: valueLabel.centerYAnchor)
         ])
         #else
         valueTextField.delegate = self
@@ -256,8 +283,14 @@ extension KeyValueCell: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         let isModified = textField.text ?? "" != textFieldValueOnBeginEditing
-        guard isModified else { return }
-        onValueChanged?(textFieldValueOnBeginEditing, textField.text ?? "")
+        if isModified {
+            onValueChanged?(textFieldValueOnBeginEditing, textField.text ?? "")
+        }
+        #if os(tvOS)
+        valueLabel.text = textField.text
+        valueTextField.isHidden = true
+        valueLabel.isHidden = false
+        #endif
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

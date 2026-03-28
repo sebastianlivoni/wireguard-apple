@@ -215,6 +215,7 @@
 
 "settingsSectionTitleAbout" = "About";
 "settingsVersionKeyWireGuardForIOS" = "WireGuard for iOS";
+"settingsVersionKeyWireGuardFortvOS" = "WireGuard for tvOS";
 "settingsVersionKeyWireGuardGoBackend" = "WireGuard Go Backend";
 
 "settingsSectionTitleExportConfigurations" = "Export configurations";

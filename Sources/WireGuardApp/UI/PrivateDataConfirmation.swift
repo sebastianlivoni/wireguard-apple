@@ -2,7 +2,9 @@
 // Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
 
 import Foundation
+#if !os(tvOS)
 import LocalAuthentication
+#endif
 #if os(macOS)
 import AppKit
 #endif

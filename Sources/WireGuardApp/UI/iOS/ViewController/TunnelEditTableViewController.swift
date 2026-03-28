@@ -506,8 +506,29 @@ extension TunnelEditTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("hejsa")
+        print("Did select row at \(indexPath)")
         #if os(tvOS)
+        switch sections[indexPath.section] {
+        case .interface:
+            let field = interfaceFieldsBySection[indexPath.section][indexPath.row]
+            guard field != .publicKey && field != .generateKeyPair else { return }
+            if let cell = tableView.cellForRow(at: indexPath) as? TunnelEditEditableKeyValueCell {
+                cell.beginEditing()
+            }
+
+        case .peer(let peerData):
+            let peerFieldsToShow = peerData.shouldAllowExcludePrivateIPsControl
+                ? peerFields
+                : peerFields.filter { $0 != .excludePrivateIPs }
+            let field = peerFieldsToShow[indexPath.row]
+            guard field != .deletePeer && field != .excludePrivateIPs else { return }
+            if let cell = tableView.cellForRow(at: indexPath) as? TunnelEditEditableKeyValueCell {
+                cell.beginEditing()
+            }
+
+        default:
+            break
+        }
         /*guard case .interface = sections[indexPath.section] else { return }
 
         let field = interfaceFieldsBySection[indexPath.section][indexPath.row]
@@ -525,8 +546,8 @@ extension TunnelEditTableViewController {
             tableView.reloadRows(at: [indexPath], with: .none)
         }
 
-        navigationController?.pushViewController(editor, animated: true)
-        return*/
+        navigationController?.pushViewController(editor, animated: true)*/
+        return
         #else
         switch sections[indexPath.section] {
         case .onDemand:
