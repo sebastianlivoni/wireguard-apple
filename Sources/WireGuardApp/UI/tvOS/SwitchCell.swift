@@ -156,4 +156,13 @@ class SwitchCell: UITableViewCell {
         return true
     }
 
+    override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        if presses.first?.type == .select {
+            guard isEnabled else { return }
+            isOn.toggle()
+            onSwitchToggled?(isOn)
+        } else {
+            super.pressesEnded(presses, with: event)
+        }
+    }
 }

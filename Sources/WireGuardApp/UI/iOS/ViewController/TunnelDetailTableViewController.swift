@@ -525,15 +525,6 @@ extension TunnelDetailTableViewController {
             navigationController?.pushViewController(ssidDetailVC, animated: true)
         }
 
-        #if os(tvOS)
-        if case .status = section {
-            if let cell = tableView.cellForRow(at: indexPath) as? SwitchCell {
-                let newValue = !cell.isOn
-                cell.onSwitchToggled?(newValue)
-            }
-        }
-        #endif
-
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

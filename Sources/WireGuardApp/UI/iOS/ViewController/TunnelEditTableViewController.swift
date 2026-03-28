@@ -357,7 +357,9 @@ extension TunnelEditTableViewController {
 
     private func excludePrivateIPsCell(for tableView: UITableView, at indexPath: IndexPath, peerData: TunnelViewModel.PeerData, field: TunnelViewModel.PeerField) -> UITableViewCell {
         let cell: SwitchCell = tableView.dequeueReusableCell(for: indexPath)
-        #if !os(tvOS)
+        #if os(tvOS)
+        cell.key = field.localizedUIString
+        #else
         cell.message = field.localizedUIString
         #endif
         cell.isEnabled = peerData.shouldAllowExcludePrivateIPsControl
