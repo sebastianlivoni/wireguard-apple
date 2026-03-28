@@ -228,7 +228,6 @@
 		963FB5BB2EEA3B78000F0D27 /* AddTunnelAppleTVViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963FB5BA2EEA3B6A000F0D27 /* AddTunnelAppleTVViewController.swift */; };
 		965189782EECBCFC00F92626 /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FDB6D16224CC04E00EE4BC3 /* LogViewController.swift */; };
 		9651897D2EECBDBC00F92626 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7774E0217181B1006A79B3 /* AppDelegate.swift */; };
-		966585762EE9B89000612BC9 /* ActivateOnDemandViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8F0D7022258153000E8335 /* ActivateOnDemandViewModel.swift */; };
 		966585772EE9B89000612BC9 /* ErrorPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBA103A21D6B4280051C35F /* ErrorPresenterProtocol.swift */; };
 		966585792EE9B89000612BC9 /* LogViewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F907C9B224663A2003CED21 /* LogViewHelper.swift */; };
 		9665857A2EE9B89000612BC9 /* TunnelImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBA103D21D6B6D70051C35F /* TunnelImporter.swift */; };
@@ -296,6 +295,7 @@
 		96994B292EE989CF00A1F8BC /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FF4AC462120B9E0002C96EB /* NetworkExtension.framework */; };
 		96994B2A2EE989CF00A1F8BC /* libwg-go.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58DB6CD52577F95D00FB6B73 /* libwg-go.a */; };
 		969B9A612EEB73C000275607 /* AddTunnelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969B9A602EEB73BC00275607 /* AddTunnelViewController.swift */; };
+		969ED7622F788A8D00C356F0 /* ActivateOnDemandViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8F0D7022258153000E8335 /* ActivateOnDemandViewModel.swift */; };
 		96C66A5E2EE99293003B2C73 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96994B432EE9925300A1F8BC /* Assets.xcassets */; };
 		96D6D7132EECD6E800C788E4 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D6D7122EECD6E600C788E4 /* SwitchCell.swift */; };
 		96E10CFB2EEE16C50030E296 /* TunnelEditTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7774F221774263006A79B3 /* TunnelEditTableViewController.swift */; };
@@ -1858,7 +1858,6 @@
 				96994AC42EE989C100A1F8BC /* TunnelsManager.swift in Sources */,
 				96994AC72EE989C100A1F8BC /* ZipExporter.swift in Sources */,
 				96994ACA2EE989C100A1F8BC /* DNSServer.swift in Sources */,
-				966585762EE9B89000612BC9 /* ActivateOnDemandViewModel.swift in Sources */,
 				966585772EE9B89000612BC9 /* ErrorPresenterProtocol.swift in Sources */,
 				966585792EE9B89000612BC9 /* LogViewHelper.swift in Sources */,
 				9665857A2EE9B89000612BC9 /* TunnelImporter.swift in Sources */,
@@ -1895,6 +1894,7 @@
 				96E10CFC2EEE16E50030E296 /* SSIDOptionEditTableViewController.swift in Sources */,
 				963FB5B12EEA2747000F0D27 /* KeyValueCell.swift in Sources */,
 				963FB5B22EEA2747000F0D27 /* ErrorPresenter.swift in Sources */,
+				969ED7622F788A8D00C356F0 /* ActivateOnDemandViewModel.swift in Sources */,
 				969B9A612EEB73C000275607 /* AddTunnelViewController.swift in Sources */,
 				963FB5B32EEA2747000F0D27 /* ChevronCell.swift in Sources */,
 				963FB5B42EEA2747000F0D27 /* TunnelEditKeyValueCell.swift in Sources */,

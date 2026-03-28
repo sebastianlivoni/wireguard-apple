@@ -106,7 +106,9 @@ class TunnelEditTableViewController: UITableViewController {
         interfaceFieldsBySection.forEach { _ in sections.append(.interface) }
         tunnelViewModel.peersData.forEach { sections.append(.peer($0)) }
         sections.append(.addPeer)
+        #if !os(tvOS)
         sections.append(.onDemand)
+        #endif
     }
 
     @objc func saveTapped() {
@@ -207,6 +209,9 @@ extension TunnelEditTableViewController {
         }
 
         cell.isUserInteractionEnabled = true
+        #if os(tvOS)
+        cell.selectionStyle = .none
+        #endif
         return cell
     }
 

@@ -91,7 +91,9 @@ class TunnelDetailTableViewController: UITableViewController {
         for (index, peer) in tunnelViewModel.peersData.enumerated() {
             sections.append(.peer(index: index, peer: peer))
         }
+        #if !os(tvOS)
         sections.append(.onDemand)
+        #endif
         sections.append(.delete)
     }
 
