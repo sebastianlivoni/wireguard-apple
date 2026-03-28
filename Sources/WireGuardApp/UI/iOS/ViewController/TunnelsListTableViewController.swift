@@ -178,12 +178,30 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
         guard tunnelsManager != nil else { return }
 
         #if os(tvOS)
-        if connectionManager.isConnected {
-            connectionManager.send(type: .requestAddConfiguration)
-            presentWaitingAddTunnel()
-        } else {
-            presentDevicePickerFullScreen()
+        let alert = UIAlertController(title: "", message: tr("addTunnelMenuHeader"), preferredStyle: .actionSheet)
+
+        let fromDeviceAction = UIAlertAction(title: tr("addTunnelMenuFromDevice"), style: .default) { [weak self] _ in
+            guard let self else { return }
+            if self.connectionManager.isConnected {
+                self.connectionManager.send(type: .requestAddConfiguration)
+                self.presentWaitingAddTunnel()
+            } else {
+                self.presentDevicePickerFullScreen()
+            }
         }
+        alert.addAction(fromDeviceAction)
+
+        let createFromScratchAction = UIAlertAction(title: tr("addTunnelMenuFromScratch"), style: .default) { [weak self] _ in
+            if let self = self, let tunnelsManager = self.tunnelsManager {
+                self.presentViewControllerForTunnelCreation(tunnelsManager: tunnelsManager)
+            }
+        }
+        alert.addAction(createFromScratchAction)
+
+        let cancelAction = UIAlertAction(title: tr("actionCancel"), style: .cancel)
+        alert.addAction(cancelAction)
+
+        present(alert, animated: true)
         #else
         let alert = UIAlertController(title: "", message: tr("addTunnelMenuHeader"), preferredStyle: .actionSheet)
         let importFileAction = UIAlertAction(title: tr("addTunnelMenuImportFile"), style: .default) { [weak self] _ in

@@ -139,7 +139,7 @@
 					<string>iPadOS</string>
 				</array>
 				<key>NSApplicationServiceUsageDescription</key>
-				<string>Tilføj WireGuard-tuneller ved at brug din iOS-enhed eller iPadOS-enhed.</string>
+				<string>Tilføj WireGuard-tuneller ved at bruge din iOS-enhed eller iPadOS-enhed.</string>
 				<key>NSApplicationServiceIdentifier</key>
 				<string>WireGuardAddTunnel</string>
 			</dict>

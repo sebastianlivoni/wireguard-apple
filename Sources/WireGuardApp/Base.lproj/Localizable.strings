@@ -25,6 +25,7 @@
 "addTunnelMenuImportFile" = "Create from file or archive";
 "addTunnelMenuQRCode" = "Create from QR code";
 "addTunnelMenuFromScratch" = "Create from scratch";
+"addTunnelMenuFromDevice" = "From an iPhone or iPad";
 
 // Tunnels list alerts
 

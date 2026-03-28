@@ -25,6 +25,7 @@
 "addTunnelMenuImportFile" = "Opret fra fil eller arkiv";
 "addTunnelMenuQRCode" = "Opret fra QR-kode";
 "addTunnelMenuFromScratch" = "Opret fra bunden";
+"addTunnelMenuFromDevice" = "Fra en iPhone eller iPad";
 
 // Tunnels list alerts
 
