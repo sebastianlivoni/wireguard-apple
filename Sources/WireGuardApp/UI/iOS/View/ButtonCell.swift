@@ -64,5 +64,15 @@ class ButtonCell: UITableViewCell {
             super.pressesEnded(presses, with: event)
         }
     }
+
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+
+        if isFocused {
+            button.setTitleColor(hasDestructiveAction ? .systemRed : .black, for: .normal)
+        } else {
+            button.setTitleColor(hasDestructiveAction ? .systemRed : .white, for: .normal)
+        }
+    }
     #endif
 }
