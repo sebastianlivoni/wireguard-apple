@@ -8,8 +8,10 @@ class TunnelEditKeyValueCell: KeyValueCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        #if os(tvOS)
+        keyLabel.textAlignment = .left
+        #else
         keyLabel.textAlignment = .right
-        #if !os(tvOS)
         valueTextField.textAlignment = .left
         #endif
 
