@@ -7,7 +7,7 @@ class SwitchCell: UITableViewCell {
 
     var isOn: Bool = false {
         didSet {
-            value = isOn ? "On" : "Off"
+            value = isOn ? tr("tunnelOn") : tr("tunnelOff")
         }
     }
 

@@ -145,6 +145,8 @@
 "tunnelEditPlaceholderTextAutomatic" = "Automatic";
 "tunnelEditPlaceholderTextStronglyRecommended" = "Strongly recommended";
 "tunnelEditPlaceholderTextOff" = "Off";
+"tunnelOff" = "Off";
+"tunnelOn" = "On";
 
 "tunnelPeerPersistentKeepaliveValue (%@)" = "every %@ seconds";
 "tunnelHandshakeTimestampNow" = "Now";

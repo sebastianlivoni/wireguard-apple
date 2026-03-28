@@ -107,7 +107,7 @@ class ToggleButton: UIButton {
     }
 
     func updateAppearance() {
-        let title = isOn ? "On" : "Off"
+        let title = isOn ? tr("tunnelOn") : tr("tunnelOff")
 
         self.setTitle(title, for: .normal)
         self.configuration = .plain()
