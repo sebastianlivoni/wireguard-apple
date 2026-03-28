@@ -249,6 +249,9 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
 
     #if os(tvOS)
     func presentDevicePickerFullScreen() {
+        #if targetEnvironment(simulator)
+        print("Not available on simulator")
+        #else
         guard let windowScene = view.window?.windowScene else { return }
         guard let rootVC = windowScene.windows.first?.rootViewController else { return }
 
@@ -271,6 +274,7 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
                 print("Device picker canceled")
             }
         }
+        #endif
     }
     #endif
 
@@ -292,14 +296,10 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
     #endif
 
     func presentViewControllerForTunnelCreation(tunnelsManager: TunnelsManager) {
-        //#if os(tvOS)
-        //fatalError("Not supportd")
-        //#else
         let editVC = TunnelEditTableViewController(tunnelsManager: tunnelsManager)
         let editNC = UINavigationController(rootViewController: editVC)
         editNC.modalPresentationStyle = .fullScreen
         present(editNC, animated: true)
-        //#endif
     }
 
     func presentViewControllerForFileImport() {

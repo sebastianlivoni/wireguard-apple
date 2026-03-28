@@ -138,6 +138,7 @@ class KeyValueCell: UITableViewCell {
             keyLabel.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
             keyLabel.topAnchor.constraint(equalToSystemSpacingBelow: contentView.layoutMarginsGuide.topAnchor, multiplier: 0.5)
         ])
+        valueTextField.delegate = self
 
         #if os(tvOS)
         contentView.addSubview(valueLabel)
@@ -158,7 +159,6 @@ class KeyValueCell: UITableViewCell {
             valueTextField.centerYAnchor.constraint(equalTo: valueLabel.centerYAnchor)
         ])
         #else
-        valueTextField.delegate = self
         valueLabelScrollView.addSubview(valueTextField)
         valueTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
