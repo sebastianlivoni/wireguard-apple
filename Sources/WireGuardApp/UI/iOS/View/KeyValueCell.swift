@@ -66,9 +66,6 @@ class KeyValueCell: UITableViewCell {
     }
 
     func beginEditing() {
-        valueTextField.text = valueLabel.text
-        valueTextField.isHidden = false
-        valueLabel.isHidden = true
         DispatchQueue.main.async {
             self.valueTextField.becomeFirstResponder()
         }
