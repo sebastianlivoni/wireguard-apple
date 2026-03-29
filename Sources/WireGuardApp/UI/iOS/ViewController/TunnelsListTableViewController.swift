@@ -246,8 +246,6 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
         #endif
         present(settingsNC, animated: true)
     }
-
-    #if os(tvOS)
     func presentDevicePickerFullScreen() {
         #if targetEnvironment(simulator)
         print("Not available on simulator")
