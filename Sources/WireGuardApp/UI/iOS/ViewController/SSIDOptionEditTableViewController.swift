@@ -68,7 +68,9 @@ class SSIDOptionEditTableViewController: UITableViewController {
         tableView.register(TextCell.self)
         tableView.isEditing = true
         tableView.allowsSelectionDuringEditing = true
+        #if !os(visionOS)
         tableView.keyboardDismissMode = .onDrag
+        #endif
     }
 
     func loadSections() {

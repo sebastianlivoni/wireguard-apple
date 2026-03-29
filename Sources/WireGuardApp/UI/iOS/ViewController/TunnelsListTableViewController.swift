@@ -5,7 +5,9 @@ import UIKit
 import MobileCoreServices
 import UserNotifications
 import Network
+#if !os(visionOS)
 import DeviceDiscoveryUI
+#endif
 
 class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
 
@@ -274,9 +276,8 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
         }
         #endif
     }
-    #endif
 
-    #if !os(tvOS)
+    #if !os(tvOS) && !os(visionOS)
     func presentAddTunnelAppleTV(connectionManager: ConnectionManager) {
         guard let tunnelsManager = tunnelsManager else { return }
 
@@ -301,7 +302,7 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
     }
 
     func presentViewControllerForFileImport() {
-        #if os(tvOS)
+        #if os(tvOS) || os(visionOS)
         fatalError("Not supportd")
         #else
         let documentTypes = ["com.wireguard.config.quick", String(kUTTypeText), String(kUTTypeZipArchive)]
@@ -312,7 +313,7 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
     }
 
     func presentViewControllerForScanningQRCode() {
-        #if os(tvOS)
+        #if os(tvOS) || os(visionOS)
         fatalError("Not supportd")
         #else
         let scanQRCodeVC = QRScanViewController()
@@ -397,7 +398,7 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
     }
 }
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(visionOS)
 extension TunnelsListTableViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let tunnelsManager = tunnelsManager else { return }
@@ -588,7 +589,7 @@ extension TunnelsListTableViewController: ConnectionManagerDelegate {
         case .error:
             presentedViewController?.dismiss(animated: true)
         case .requestAddConfiguration:
-            #if !os(tvOS)
+            #if !os(tvOS) && !os(visionOS)
             presentAddTunnelAppleTV(connectionManager: connectionManager)
             #endif
         case .requestEditConfiguration:

@@ -305,7 +305,7 @@ class TunnelsManager {
         if tunnel.isTunnelAvailableToUser {
             (tunnelProviderManager.protocolConfiguration as? NETunnelProviderProtocol)?.destroyConfigurationReference()
         }
-        #elseif os(iOS) || os(tvOS)
+        #elseif os(iOS) || os(tvOS) || os(visionOS)
         (tunnelProviderManager.protocolConfiguration as? NETunnelProviderProtocol)?.destroyConfigurationReference()
         #else
         #error("Unimplemented")

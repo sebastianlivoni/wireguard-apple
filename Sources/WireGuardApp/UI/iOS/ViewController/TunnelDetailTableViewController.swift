@@ -334,13 +334,13 @@ extension TunnelDetailTableViewController {
 
             let isSwitchOn = (status == .activating || status == .active || isOnDemandEngaged)
 
-            #if os(tvOS)
+            #if os(tvOS) || os(visionOS)
             cell.isOn = isSwitchOn
             #else
             cell.switchView.setOn(isSwitchOn, animated: true)
             #endif
 
-            #if !os(tvOS)
+            #if !os(tvOS) && !os(visionOS)
             if isOnDemandEngaged && !(status == .activating || status == .active) {
                 cell.switchView.onTintColor = UIColor.systemYellow
             } else {
@@ -368,14 +368,14 @@ extension TunnelDetailTableViewController {
 
             if tunnel.hasOnDemandRules {
                 text += isOnDemandEngaged ? tr("tunnelStatusAddendumOnDemand") : ""
-                #if os(tvOS)
+                #if os(tvOS) || os(visionOS)
                 cell.isUserInteractionEnabled = true
                 #else
                 cell.switchView.isUserInteractionEnabled = true
                 #endif
                 cell.isEnabled = true
             } else {
-                #if os(tvOS)
+                #if os(tvOS) || os(visionOS)
                 cell.isUserInteractionEnabled = (status == .inactive || status == .active)
                 #else
                 cell.switchView.isUserInteractionEnabled = (status == .inactive || status == .active)

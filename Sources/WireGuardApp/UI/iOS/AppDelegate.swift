@@ -26,7 +26,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         #endif
 
+        #if os(visionOS)
+        let window = UIWindow()
+        #else
         let window = UIWindow(frame: UIScreen.main.bounds)
+        #endif
         self.window = window
 
         let mainVC = MainViewController(connectionManager: connectionManager)
@@ -49,12 +53,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillResignActive(_ application: UIApplication) {
         guard let allTunnelNames = mainVC?.allTunnelNames() else { return }
-        #if !os(tvOS)
+        #if !os(tvOS) && !os(visionOS)
         application.shortcutItems = QuickActionItem.createItems(allTunnelNames: allTunnelNames)
         #endif
     }
 
-    #if !os(tvOS)
+    #if !os(tvOS) && !os(visionOS)
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         guard shortcutItem.type == QuickActionItem.type else {
             completionHandler(false)

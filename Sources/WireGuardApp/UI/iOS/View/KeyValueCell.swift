@@ -232,7 +232,7 @@ class KeyValueCell: UITableViewCell {
 
         if let recognizerView = recognizer.view,
             let recognizerSuperView = recognizerView.superview, recognizerView.becomeFirstResponder() {
-            #if !os(tvOS)
+            #if !os(tvOS) && !os(visionOS)
             let menuController = UIMenuController.shared
             menuController.setTargetRect(detailTextLabel?.frame ?? recognizerView.frame, in: detailTextLabel?.superview ?? recognizerSuperView)
             menuController.setMenuVisible(true, animated: true)

@@ -22,11 +22,14 @@ GOOS_macosx := darwin
 GOOS_iphoneos := ios
 GOOS_appletvos := ios
 GOOS_appletvsimulator := ios
+GOOS_xros := ios
+GOOS_xrsimulator := ios
 
 UNAME := $(shell uname -m)
 ifeq ($(UNAME), $(GOARCH_arm64))
     GOOS_iphonesimulator := ios
     GOOS_appletvsimulator := ios
+    GOOS_xrsimulator := ios
 endif
 
 build: $(DESTDIR)/libwg-go.a
