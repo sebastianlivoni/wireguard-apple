@@ -274,7 +274,6 @@ class TunnelsListTableViewController: UIViewController, UIAdaptivePresentationCo
         }
         #endif
     }
-    #endif
 
     #if !os(tvOS)
     func presentAddTunnelAppleTV(connectionManager: ConnectionManager) {
