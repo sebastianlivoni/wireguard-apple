@@ -7,7 +7,7 @@ let package = Package(
     name: "WireGuardKit",
     platforms: [
         .macOS(.v12),
-        .iOS(.v15)
+        .iOS(.v15),
     ],
     products: [
         .library(name: "WireGuardKit", targets: ["WireGuardKit"])
@@ -31,10 +31,10 @@ let package = Package(
                 "go.mod",
                 "go.sum",
                 "api-apple.go",
-                "Makefile"
+                "Makefile",
             ],
             publicHeadersPath: ".",
             linkerSettings: [.linkedLibrary("wg-go")]
-        )
+        ),
     ]
 )
