@@ -22,6 +22,16 @@ class KeyValueCell: UITableViewCell {
         return scrollView
     }()
 
+    let valueLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .right
+        label.font = UIFont.preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 1
+        return label
+    }()
+
     let valueTextField: UITextField = {
         let valueTextField = KeyValueCellTextField()
         valueTextField.textAlignment = .right
@@ -35,6 +45,33 @@ class KeyValueCell: UITableViewCell {
         return valueTextField
     }()
 
+    #if os(tvOS)
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+
+        if self.isFocused {
+            keyLabel.textColor = .black
+            valueLabel.textColor = .darkGray
+        } else {
+            // Only commit and hide if we're not currently editing
+            guard !valueTextField.isFirstResponder else { return }
+            keyLabel.textColor = .label
+            valueLabel.textColor = .secondaryLabel
+            if let text = valueTextField.text {
+                valueLabel.text = text
+            }
+            valueTextField.isHidden = true
+            valueLabel.isHidden = false
+        }
+    }
+
+    func beginEditing() {
+        DispatchQueue.main.async {
+            self.valueTextField.becomeFirstResponder()
+        }
+    }
+    #endif
+
     var copyableGesture = true
 
     var key: String {
@@ -42,9 +79,23 @@ class KeyValueCell: UITableViewCell {
         set(value) { keyLabel.text = value }
     }
     var value: String {
-        get { return valueTextField.text ?? "" }
-        set(value) { valueTextField.text = value }
+        get {
+            #if os(tvOS)
+            return valueLabel.text ?? ""
+            #else
+            return valueTextField.text ?? ""
+            #endif
+        }
+        set {
+            #if os(tvOS)
+            valueLabel.text = newValue
+            valueTextField.text = newValue
+            #else
+            valueTextField.text = newValue
+            #endif
+        }
     }
+
     var placeholderText: String {
         get { return valueTextField.placeholder ?? "" }
         set(value) { valueTextField.placeholder = value }
@@ -84,8 +135,27 @@ class KeyValueCell: UITableViewCell {
             keyLabel.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
             keyLabel.topAnchor.constraint(equalToSystemSpacingBelow: contentView.layoutMarginsGuide.topAnchor, multiplier: 0.5)
         ])
-
         valueTextField.delegate = self
+
+        #if os(tvOS)
+        contentView.addSubview(valueLabel)
+        valueLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            valueLabel.leadingAnchor.constraint(equalTo: keyLabel.trailingAnchor, constant: 8),
+            valueLabel.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+            valueLabel.centerYAnchor.constraint(equalTo: keyLabel.centerYAnchor)
+        ])
+
+        valueTextField.isHidden = true
+        valueTextField.isEnabled = true
+        contentView.addSubview(valueTextField)
+        valueTextField.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            valueTextField.leadingAnchor.constraint(equalTo: valueLabel.leadingAnchor),
+            valueTextField.trailingAnchor.constraint(equalTo: valueLabel.trailingAnchor),
+            valueTextField.centerYAnchor.constraint(equalTo: valueLabel.centerYAnchor)
+        ])
+        #else
         valueLabelScrollView.addSubview(valueTextField)
         valueTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -98,6 +168,7 @@ class KeyValueCell: UITableViewCell {
         let expandToFitValueLabelConstraint = NSLayoutConstraint(item: valueTextField, attribute: .width, relatedBy: .equal, toItem: valueLabelScrollView, attribute: .width, multiplier: 1, constant: 0)
         expandToFitValueLabelConstraint.priority = .defaultLow + 1
         expandToFitValueLabelConstraint.isActive = true
+        #endif
 
         contentView.addSubview(valueLabelScrollView)
         valueLabelScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -161,9 +232,11 @@ class KeyValueCell: UITableViewCell {
 
         if let recognizerView = recognizer.view,
             let recognizerSuperView = recognizerView.superview, recognizerView.becomeFirstResponder() {
+            #if !os(tvOS)
             let menuController = UIMenuController.shared
             menuController.setTargetRect(detailTextLabel?.frame ?? recognizerView.frame, in: detailTextLabel?.superview ?? recognizerSuperView)
             menuController.setMenuVisible(true, animated: true)
+            #endif
         }
     }
 
@@ -175,16 +248,20 @@ class KeyValueCell: UITableViewCell {
         return (action == #selector(UIResponderStandardEditActions.copy(_:)))
     }
 
+    #if !os(tvOS)
     override func copy(_ sender: Any?) {
         UIPasteboard.general.string = valueTextField.text
     }
+    #endif
 
     override func prepareForReuse() {
         super.prepareForReuse()
         copyableGesture = true
+        #if !os(tvOS)
         placeholderText = ""
-        isValueValid = true
         keyboardType = .default
+        #endif
+        isValueValid = true
         onValueChanged = nil
         onValueBeingEdited = nil
         observationToken = nil
@@ -203,8 +280,14 @@ extension KeyValueCell: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         let isModified = textField.text ?? "" != textFieldValueOnBeginEditing
-        guard isModified else { return }
-        onValueChanged?(textFieldValueOnBeginEditing, textField.text ?? "")
+        if isModified {
+            onValueChanged?(textFieldValueOnBeginEditing, textField.text ?? "")
+        }
+        #if os(tvOS)
+        valueLabel.text = textField.text
+        valueTextField.isHidden = true
+        valueLabel.isHidden = false
+        #endif
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

@@ -8,6 +8,10 @@ protocol TunnelEditTableViewControllerDelegate: AnyObject {
     func tunnelEditingCancelled()
 }
 
+protocol TunnelEditTableViewControllerDelegateAppleTV: AnyObject {
+    func tunnelSaved(tunnelConfiguration: TunnelConfiguration)
+}
+
 class TunnelEditTableViewController: UITableViewController {
     private enum Section {
         case interface
@@ -30,6 +34,8 @@ class TunnelEditTableViewController: UITableViewController {
     }
 
     weak var delegate: TunnelEditTableViewControllerDelegate?
+
+    weak var delegateAppleTV: TunnelEditTableViewControllerDelegateAppleTV?
 
     let interfaceFieldsBySection: [[TunnelViewModel.InterfaceField]] = [
         [.name],
@@ -125,14 +131,18 @@ class TunnelEditTableViewController: UITableViewController {
                     }
                 }
             } else {
-                // We're adding a new tunnel
-                tunnelsManager.add(tunnelConfiguration: tunnelConfiguration, onDemandOption: onDemandOption) { [weak self] result in
-                    switch result {
-                    case .failure(let error):
-                        ErrorPresenter.showErrorAlert(error: error, from: self)
-                    case .success(let tunnel):
-                        self?.dismiss(animated: true, completion: nil)
-                        self?.delegate?.tunnelSaved(tunnel: tunnel)
+                if self.delegateAppleTV != nil {
+                    self.delegateAppleTV?.tunnelSaved(tunnelConfiguration: tunnelConfiguration)
+                } else {
+                    // We're adding a new tunnel
+                    tunnelsManager.add(tunnelConfiguration: tunnelConfiguration, onDemandOption: onDemandOption) { [weak self] result in
+                        switch result {
+                        case .failure(let error):
+                            ErrorPresenter.showErrorAlert(error: error, from: self)
+                        case .success(let tunnel):
+                            self?.dismiss(animated: true, completion: nil)
+                            self?.delegate?.tunnelSaved(tunnel: tunnel)
+                        }
                     }
                 }
             }
@@ -184,16 +194,23 @@ extension TunnelEditTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell
         switch sections[indexPath.section] {
         case .interface:
-            return interfaceFieldCell(for: tableView, at: indexPath)
+            cell = interfaceFieldCell(for: tableView, at: indexPath)
         case .peer(let peerData):
-            return peerCell(for: tableView, at: indexPath, with: peerData)
+            cell = peerCell(for: tableView, at: indexPath, with: peerData)
         case .addPeer:
-            return addPeerCell(for: tableView, at: indexPath)
+            cell = addPeerCell(for: tableView, at: indexPath)
         case .onDemand:
-            return onDemandCell(for: tableView, at: indexPath)
+            cell = onDemandCell(for: tableView, at: indexPath)
         }
+
+        #if os(tvOS)
+        cell.isUserInteractionEnabled = true
+        cell.selectionStyle = .none
+        #endif
+        return cell
     }
 
     private func interfaceFieldCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
@@ -335,7 +352,11 @@ extension TunnelEditTableViewController {
 
     private func excludePrivateIPsCell(for tableView: UITableView, at indexPath: IndexPath, peerData: TunnelViewModel.PeerData, field: TunnelViewModel.PeerField) -> UITableViewCell {
         let cell: SwitchCell = tableView.dequeueReusableCell(for: indexPath)
+        #if os(tvOS)
+        cell.key = field.localizedUIString
+        #else
         cell.message = field.localizedUIString
+        #endif
         cell.isEnabled = peerData.shouldAllowExcludePrivateIPsControl
         cell.isOn = peerData.excludePrivateIPsValue
         cell.onSwitchToggled = { [weak self] isOn in
@@ -425,29 +446,37 @@ extension TunnelEditTableViewController {
 
     private func onDemandCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let field = onDemandFields[indexPath.row]
-        if indexPath.row < 2 {
+        switch field {
+        case .nonWiFiInterface, .wiFiInterface:
             let cell: SwitchCell = tableView.dequeueReusableCell(for: indexPath)
+            #if os(tvOS)
+            cell.keyLabel.text = field.localizedUIString
+            cell.isEnabled = true
+            #else
             cell.message = field.localizedUIString
+            #endif
             cell.isOn = onDemandViewModel.isEnabled(field: field)
             cell.onSwitchToggled = { [weak self] isOn in
                 guard let self = self else { return }
                 self.onDemandViewModel.setEnabled(field: field, isEnabled: isOn)
                 let section = self.sections.firstIndex { $0 == .onDemand }!
-                let indexPath = IndexPath(row: 2, section: section)
+                let ssidIndexPath = IndexPath(row: 2, section: section)
                 if field == .wiFiInterface {
                     if isOn {
-                        tableView.insertRows(at: [indexPath], with: .fade)
+                        tableView.insertRows(at: [ssidIndexPath], with: .fade)
                     } else {
-                        tableView.deleteRows(at: [indexPath], with: .fade)
+                        tableView.deleteRows(at: [ssidIndexPath], with: .fade)
                     }
                 }
             }
             return cell
-        } else {
+        case .ssid:
             let cell: ChevronCell = tableView.dequeueReusableCell(for: indexPath)
             cell.message = field.localizedUIString
             cell.detailMessage = onDemandViewModel.localizedSSIDDescription
             return cell
+        default:
+            fatalError("Unexpected onDemand field")
         }
     }
 
@@ -467,23 +496,53 @@ extension TunnelEditTableViewController {
 
 extension TunnelEditTableViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        #if os(tvOS)
+        switch sections[indexPath.section] {
+        case .interface, .peer:
+            return indexPath
+        case .onDemand:
+            return onDemandFields[indexPath.row] == .ssid ? indexPath : nil
+        default:
+            return nil
+        }
+        #else
         if case .onDemand = sections[indexPath.section], indexPath.row == 2 {
             return indexPath
         } else {
             return nil
         }
+        #endif
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        #if os(tvOS)
+        switch sections[indexPath.section] {
+        case .interface:
+            let field = interfaceFieldsBySection[indexPath.section][indexPath.row]
+            guard field != .publicKey && field != .generateKeyPair else { return }
+            if let cell = tableView.cellForRow(at: indexPath) as? TunnelEditEditableKeyValueCell {
+                cell.beginEditing()
+            }
+        case .peer(let peerData):
+            let peerFieldsToShow = peerData.shouldAllowExcludePrivateIPsControl
+            ? peerFields
+            : peerFields.filter { $0 != .excludePrivateIPs }
+            let field = peerFieldsToShow[indexPath.row]
+            guard field != .deletePeer && field != .excludePrivateIPs else { return }
+            if let cell = tableView.cellForRow(at: indexPath) as? TunnelEditEditableKeyValueCell {
+                cell.beginEditing()
+            }
+        default: break
+        }
+        #endif
+
         switch sections[indexPath.section] {
         case .onDemand:
-            assert(indexPath.row == 2)
             tableView.deselectRow(at: indexPath, animated: true)
             let ssidOptionVC = SSIDOptionEditTableViewController(option: onDemandViewModel.ssidOption, ssids: onDemandViewModel.selectedSSIDs)
             ssidOptionVC.delegate = self
             navigationController?.pushViewController(ssidOptionVC, animated: true)
-        default:
-            assertionFailure()
+        default: break
         }
     }
 }

@@ -185,7 +185,9 @@ extension SSIDOptionEditTableViewController {
     private func noSSIDsCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell: TextCell = tableView.dequeueReusableCell(for: indexPath)
         cell.message = tr("tunnelOnDemandNoSSIDs")
+        #if !os(tvOS)
         cell.setTextColor(.secondaryLabel)
+        #endif
         cell.setTextAlignment(.center)
         return cell
     }
@@ -263,6 +265,8 @@ extension SSIDOptionEditTableViewController {
     private func getConnectedSSID(completionHandler: @escaping (String?) -> Void) {
         #if targetEnvironment(simulator)
         completionHandler("Simulator Wi-Fi")
+        #elseif os(tvOS)
+        completionHandler(nil) // TODO: Figure out how to get connected SSID
         #else
         NEHotspotNetwork.fetchCurrent { hotspotNetwork in
             completionHandler(hotspotNetwork?.ssid)

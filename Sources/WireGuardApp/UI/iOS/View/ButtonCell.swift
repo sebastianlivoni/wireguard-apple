@@ -18,6 +18,9 @@ class ButtonCell: UITableViewCell {
         let button = UIButton(type: .system)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
+        #if os(tvOS)
+        button.configuration = .plain()
+        #endif
         return button
     }()
 
@@ -52,4 +55,24 @@ class ButtonCell: UITableViewCell {
         onTapped = nil
         hasDestructiveAction = false
     }
+
+    #if os(tvOS)
+    override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        if presses.first?.type == .select {
+            onTapped?()
+        } else {
+            super.pressesEnded(presses, with: event)
+        }
+    }
+
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+
+        if isFocused {
+            button.setTitleColor(hasDestructiveAction ? .systemRed : .black, for: .normal)
+        } else {
+            button.setTitleColor(hasDestructiveAction ? .systemRed : .white, for: .normal)
+        }
+    }
+    #endif
 }

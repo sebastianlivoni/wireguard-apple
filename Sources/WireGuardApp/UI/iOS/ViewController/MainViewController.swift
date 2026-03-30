@@ -2,6 +2,7 @@
 // Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
 
 import UIKit
+import Network
 
 class MainViewController: UISplitViewController {
 
@@ -9,12 +10,16 @@ class MainViewController: UISplitViewController {
     var onTunnelsManagerReady: ((TunnelsManager) -> Void)?
     var tunnelsListVC: TunnelsListTableViewController?
 
-    init() {
+    init(connectionManager: ConnectionManager) {
         let detailVC = UIViewController()
+        #if os(tvOS)
+        detailVC.view.backgroundColor = .clear
+        #else
         detailVC.view.backgroundColor = .systemBackground
+        #endif
         let detailNC = UINavigationController(rootViewController: detailVC)
 
-        let masterVC = TunnelsListTableViewController()
+        let masterVC = TunnelsListTableViewController(connectionManager: connectionManager)
         let masterNC = UINavigationController(rootViewController: masterVC)
 
         tunnelsListVC = masterVC

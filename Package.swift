@@ -8,6 +8,7 @@ let package = Package(
     platforms: [
         .macOS(.v12),
         .iOS(.v15),
+        .tvOS(.v12),
     ],
     products: [
         .library(name: "WireGuardKit", targets: ["WireGuardKit"])

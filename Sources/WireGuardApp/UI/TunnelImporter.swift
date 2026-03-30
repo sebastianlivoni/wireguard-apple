@@ -4,6 +4,40 @@
 import Foundation
 
 class TunnelImporter {
+    static func importFrom(urls: [URL], completion: @escaping ([TunnelConfiguration]) -> Void) {
+        guard !urls.isEmpty else {
+            completion([])
+            return
+        }
+
+        var configs = [TunnelConfiguration]()
+        let group = DispatchGroup()
+
+        for url in urls {
+            if url.pathExtension.lowercased() == "zip" {
+                group.enter()
+                ZipImporter.importConfigFiles(from: url) { result in
+                    if case .success(let configsInZip) = result {
+                        configs.append(contentsOf: configsInZip.compactMap { $0 })
+                    }
+                    group.leave()
+                }
+            } else {
+                if let fileContents = try? String(contentsOf: url),
+                   let config = try? TunnelConfiguration(
+                        fromWgQuickConfig: fileContents,
+                        called: url.deletingPathExtension().lastPathComponent
+                   ) {
+                    configs.append(config)
+                }
+            }
+        }
+
+        group.notify(queue: .main) {
+            completion(configs)
+        }
+    }
+
     static func importFromFile(urls: [URL], into tunnelsManager: TunnelsManager, sourceVC: AnyObject?, errorPresenterType: ErrorPresenterProtocol.Type, completionHandler: (() -> Void)? = nil) {
         guard !urls.isEmpty else {
             completionHandler?()

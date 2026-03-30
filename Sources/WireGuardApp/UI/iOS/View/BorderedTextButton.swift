@@ -26,9 +26,11 @@ class BorderedTextButton: UIView {
     init() {
         super.init(frame: CGRect.zero)
 
+        #if !os(tvOS)
         layer.borderWidth = 1
         layer.cornerRadius = 5
         layer.borderColor = button.tintColor.cgColor
+        #endif
 
         addSubview(button)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -37,7 +39,11 @@ class BorderedTextButton: UIView {
             button.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
 
+        #if os(tvOS)
+        button.addTarget(self, action: #selector(buttonTapped), for: .primaryActionTriggered)
+        #else
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        #endif
     }
 
     required init?(coder aDecoder: NSCoder) {

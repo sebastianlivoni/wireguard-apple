@@ -331,13 +331,20 @@ extension TunnelDetailTableViewController {
             let isOnDemandEngaged = tunnel.isActivateOnDemandEnabled
 
             let isSwitchOn = (status == .activating || status == .active || isOnDemandEngaged)
-            cell.switchView.setOn(isSwitchOn, animated: true)
 
+            #if os(tvOS)
+            cell.isOn = isSwitchOn
+            #else
+            cell.switchView.setOn(isSwitchOn, animated: true)
+            #endif
+
+            #if !os(tvOS)
             if isOnDemandEngaged && !(status == .activating || status == .active) {
                 cell.switchView.onTintColor = UIColor.systemYellow
             } else {
                 cell.switchView.onTintColor = UIColor.systemGreen
             }
+            #endif
 
             var text: String
             switch status {
@@ -359,10 +366,18 @@ extension TunnelDetailTableViewController {
 
             if tunnel.hasOnDemandRules {
                 text += isOnDemandEngaged ? tr("tunnelStatusAddendumOnDemand") : ""
+                #if os(tvOS)
+                cell.isUserInteractionEnabled = true
+                #else
                 cell.switchView.isUserInteractionEnabled = true
+                #endif
                 cell.isEnabled = true
             } else {
+                #if os(tvOS)
+                cell.isUserInteractionEnabled = (status == .inactive || status == .active)
+                #else
                 cell.switchView.isUserInteractionEnabled = (status == .inactive || status == .active)
+                #endif
                 cell.isEnabled = (status == .inactive || status == .active)
             }
 
@@ -370,10 +385,15 @@ extension TunnelDetailTableViewController {
                 text = tr("tunnelStatusOnDemandDisabled")
             }
 
+            #if os(tvOS)
+            cell.key = text
+            #else
             cell.textLabel?.text = text
+            #endif
         }
 
         update(cell: cell, with: tunnel)
+
         cell.statusObservationToken = tunnel.observe(\.status) { [weak cell] tunnel, _ in
             update(cell: cell, with: tunnel)
         }
@@ -478,19 +498,31 @@ extension TunnelDetailTableViewController {
 
 extension TunnelDetailTableViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if case .onDemand = sections[indexPath.section],
+        let section = sections[indexPath.section]
+
+        if case .onDemand = section,
             case .ssid = TunnelDetailTableViewController.onDemandFields[indexPath.row] {
             return indexPath
         }
+
+        #if os(tvOS)
+        if case .status = section {
+            return indexPath
+        }
+        #endif
+
         return nil
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if case .onDemand = sections[indexPath.section],
+        let section = sections[indexPath.section]
+
+        if case .onDemand = section,
             case .ssid = TunnelDetailTableViewController.onDemandFields[indexPath.row] {
             let ssidDetailVC = SSIDOptionDetailTableViewController(title: onDemandViewModel.ssidOption.localizedUIString, ssids: onDemandViewModel.selectedSSIDs)
             navigationController?.pushViewController(ssidDetailVC, animated: true)
         }
+
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

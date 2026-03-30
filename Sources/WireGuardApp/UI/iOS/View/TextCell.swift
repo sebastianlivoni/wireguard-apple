@@ -28,7 +28,9 @@ class TextCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         message = ""
+        #if !os(tvOS)
         setTextColor(.label)
+        #endif
         setTextAlignment(.left)
     }
 }
