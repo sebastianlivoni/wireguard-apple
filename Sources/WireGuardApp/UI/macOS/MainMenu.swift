@@ -120,6 +120,8 @@ class MainMenu: NSMenu {
         let fullScreenMenuItem = menu.addItem(withTitle: "", action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent:"f")
         fullScreenMenuItem.keyEquivalentModifierMask = [.command, .control]
 
+        NSApp.windowsMenu = menu
+
         return menu
     }
 }
