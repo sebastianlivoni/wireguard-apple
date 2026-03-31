@@ -1,0 +1,457 @@
+// SPDX-License-Identifier: MIT
+// Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
+
+// Generic alert action names
+
+"actionOK" = "OK";
+"actionCancel" = "Annuller";
+"actionSave" = "Gem";
+
+// Tunnels list UI
+
+"tunnelsListTitle" = "WireGuard";
+"tunnelsListSettingsButtonTitle" = "Indstillinger";
+"tunnelsListCenteredAddTunnelButtonTitle" = "Tilføj en tunnel";
+"tunnelsListSwipeDeleteButtonTitle" = "Slet";
+"tunnelsListSelectButtonTitle" = "Vælg";
+"tunnelsListSelectAllButtonTitle" = "Vælg alle";
+"tunnelsListDeleteButtonTitle" = "Slet";
+"tunnelsListSelectedTitle (%d)" = "%d valgt";
+"tunnelListCaptionOnDemand" = "On-Demand";
+
+// Tunnels list menu
+
+"addTunnelMenuHeader" = "Tilføj en ny WireGuard-tunnel";
+"addTunnelMenuImportFile" = "Opret fra fil eller arkiv";
+"addTunnelMenuQRCode" = "Opret fra QR-kode";
+"addTunnelMenuFromScratch" = "Opret fra bunden";
+
+// Tunnels list alerts
+
+"alertImportedFromMultipleFilesTitle (%d)" = "Oprettet %d tunneler";
+"alertImportedFromMultipleFilesMessage (%1$d of %2$d)" = "Oprettet %1$d af %2$d tunneler fra importerede filer";
+
+"alertImportedFromZipTitle (%d)" = "Oprettet %d tunneler";
+"alertImportedFromZipMessage (%1$d of %2$d)" = "Oprettet %1$d af %2$d tunneler fra zip-arkiv";
+
+"alertBadConfigImportTitle" = "Kan ikke importere tunnel";
+"alertBadConfigImportMessage (%@)" = "Filen ‘%@’ indeholder ikke en gyldig WireGuard-konfiguration";
+
+"deleteTunnelsConfirmationAlertButtonTitle" = "Slet";
+"deleteTunnelConfirmationAlertButtonMessage (%d)" = "Slet %d tunnel?";
+"deleteTunnelsConfirmationAlertButtonMessage (%d)" = "Slet %d tunneler?";
+
+// Tunnel detail and edit UI
+
+"newTunnelViewTitle" = "Ny konfiguration";
+"editTunnelViewTitle" = "Rediger konfiguration";
+
+"tunnelSectionTitleStatus" = "Status";
+
+"tunnelStatusInactive" = "Inaktiv";
+"tunnelStatusActivating" = "Aktiverer";
+"tunnelStatusActive" = "Aktiv";
+"tunnelStatusDeactivating" = "Deaktiverer";
+"tunnelStatusReasserting" = "Genaktiverer";
+"tunnelStatusRestarting" = "Genstarter";
+"tunnelStatusWaiting" = "Venter";
+
+"tunnelStatusAddendumOnDemand" = " (On-Demand)";
+"tunnelStatusOnDemandDisabled" = "On-Demand Disabled";
+"tunnelStatusAddendumOnDemandEnabled" = ", On-Demand Enabled";
+"tunnelStatusAddendumOnDemandDisabled" = ", On-Demand Disabled";
+
+"macToggleStatusButtonActivate" = "Aktiver";
+"macToggleStatusButtonActivating" = "Aktiverer…";
+"macToggleStatusButtonDeactivate" = "Deaktiver";
+"macToggleStatusButtonDeactivating" = "Deaktiverer…";
+"macToggleStatusButtonReasserting" = "Genaktiverer…";
+"macToggleStatusButtonRestarting" = "Genstarter…";
+"macToggleStatusButtonWaiting" = "Venter…";
+"macToggleStatusButtonEnableOnDemand" = "Aktivér Efter behov";
+"macToggleStatusButtonDisableOnDemand" = "Deaktiver Efter behov";
+"macToggleStatusButtonDisableOnDemandDeactivate" = "Deaktiver Efter behov og Deaktiver";
+
+"tunnelSectionTitleInterface" = "Grænseflade";
+
+"tunnelInterfaceName" = "Navn";
+"tunnelInterfacePrivateKey" = "Privat nøgle";
+"tunnelInterfacePublicKey" = "Offentlig nøgle";
+"tunnelInterfaceGenerateKeypair" = "Generér nøglepar";
+"tunnelInterfaceAddresses" = "Adresser";
+"tunnelInterfaceListenPort" = "Port";
+"tunnelInterfaceMTU" = "MTU";
+"tunnelInterfaceDNS" = "DNS-servere";
+"tunnelInterfacePAC" = "PAC";
+"tunnelInterfaceStatus" = "Status";
+
+"tunnelSectionTitlePeer" = "Peer";
+
+"tunnelPeerPublicKey" = "Offentlig nøgle";
+"tunnelPeerPreSharedKey" = "Forhåndsdelte nøgle";
+"tunnelPeerEndpoint" = "Endpoint";
+"tunnelPeerPersistentKeepalive" = "Vedvarende holdelevetid";
+"tunnelPeerAllowedIPs" = "Tilladte IP'er";
+"tunnelPeerRxBytes" = "Data modtaget";
+"tunnelPeerTxBytes" = "Data sendt";
+"tunnelPeerLastHandshakeTime" = "Seneste handshake";
+"tunnelPeerExcludePrivateIPs" = "Udeluk private IP'er";
+
+"tunnelSectionTitleOnDemand" = "On-Demand Activation";
+
+"tunnelOnDemandCellular" = "Mobilnet";
+"tunnelOnDemandEthernet" = "Ethernet";
+"tunnelOnDemandWiFi" = "Wi-Fi";
+"tunnelOnDemandSSIDsKey" = "SSIDs";
+
+"tunnelOnDemandAnySSID" = "Enhver SSID";
+"tunnelOnDemandOnlyTheseSSIDs" = "Kun disse SSID'er";
+"tunnelOnDemandExceptTheseSSIDs" = "Undtag disse SSID'er";
+"tunnelOnDemandOnlySSID (%d)" = "Kun %d SSID";
+"tunnelOnDemandOnlySSIDs (%d)" = "Kun %d SSID'er";
+"tunnelOnDemandExceptSSID (%d)" = "Undtag %d SSID";
+"tunnelOnDemandExceptSSIDs (%d)" = "Undtag %d SSID'er";
+"tunnelOnDemandSSIDOptionDescriptionMac (%1$@: %2$@)" = "%1$@: %2$@";
+
+"tunnelOnDemandSSIDViewTitle" = "SSID'er";
+"tunnelOnDemandSectionTitleSelectedSSIDs" = "SSID'er";
+"tunnelOnDemandNoSSIDs" = "Ingen SSID'er";
+"tunnelOnDemandSectionTitleAddSSIDs" = "Tilføj SSID'er";
+"tunnelOnDemandAddMessageAddConnectedSSID (%@)" = "Tilføj tilsluttet: %@";
+"tunnelOnDemandAddMessageAddNewSSID" = "Tilføj nyt";
+"tunnelOnDemandSSIDTextFieldPlaceholder" = "SSID";
+
+"tunnelOnDemandKey" = "Efter behov";
+"tunnelOnDemandOptionOff" = "Fra";
+"tunnelOnDemandOptionWiFiOnly" = "Kun Wi-Fi";
+"tunnelOnDemandOptionWiFiOrCellular" = "Wi-Fi eller mobilnet";
+"tunnelOnDemandOptionCellularOnly" = "Kun mobilnet";
+"tunnelOnDemandOptionWiFiOrEthernet" = "Wi-Fi eller Ethernet";
+"tunnelOnDemandOptionEthernetOnly" = "Kun Ethernet";
+
+"addPeerButtonTitle" = "Tilføj peer";
+
+"deletePeerButtonTitle" = "Slet peer";
+"deletePeerConfirmationAlertButtonTitle" = "Slet";
+"deletePeerConfirmationAlertMessage" = "Vil du slette denne peer?";
+
+"deleteTunnelButtonTitle" = "Slet tunnel";
+"deleteTunnelConfirmationAlertButtonTitle" = "Slet";
+"deleteTunnelConfirmationAlertMessage" = "Vil du slette denne tunnel?";
+
+"tunnelEditPlaceholderTextRequired" = "Påkrævet";
+"tunnelEditPlaceholderTextOptional" = "Valgfri";
+"tunnelEditPlaceholderTextAutomatic" = "Automatisk";
+"tunnelEditPlaceholderTextStronglyRecommended" = "Stærkt anbefalet";
+"tunnelEditPlaceholderTextOff" = "Fra";
+
+"tunnelPeerPersistentKeepaliveValue (%@)" = "hver %@ sekunder";
+"tunnelHandshakeTimestampNow" = "Nu";
+"tunnelHandshakeTimestampSystemClockBackward" = "(Systemklokken blev drejet tilbage)";
+"tunnelHandshakeTimestampAgo (%@)" = "%@ siden";
+"tunnelHandshakeTimestampYear (%d)" = "%d år";
+"tunnelHandshakeTimestampYears (%d)" = "%d år";
+"tunnelHandshakeTimestampDay (%d)" = "%d dag";
+"tunnelHandshakeTimestampDays (%d)" = "%d dage";
+"tunnelHandshakeTimestampHour (%d)" = "%d time";
+"tunnelHandshakeTimestampHours (%d)" = "%d timer";
+"tunnelHandshakeTimestampMinute (%d)" = "%d minut";
+"tunnelHandshakeTimestampMinutes (%d)" = "%d minutter";
+"tunnelHandshakeTimestampSecond (%d)" = "%d sekund";
+"tunnelHandshakeTimestampSeconds (%d)" = "%d sekunder";
+
+"tunnelHandshakeTimestampHours hh:mm:ss (%@)" = "%@ timer";
+"tunnelHandshakeTimestampMinutes mm:ss (%@)" = "%@ minutter";
+
+"tunnelPeerPresharedKeyEnabled" = "aktiveret";
+
+// Error alerts while creating / editing a tunnel configuration
+
+/* Alert title for error in the interface data */
+"alertInvalidInterfaceTitle" = "Ugyldig grænseflade";
+
+/* Any one of the following alert messages can go with the above title */
+"alertInvalidInterfaceMessageNameRequired" = "Grænsefladenavn er påkrævet";
+"alertInvalidInterfaceMessagePrivateKeyRequired" = "Grænsefladens private nøgle er påkrævet";
+"alertInvalidInterfaceMessagePrivateKeyInvalid" = "Grænsefladens private nøgle skal være en 32-byte nøgle i base64-kodning";
+"alertInvalidInterfaceMessageAddressInvalid" = "Grænsefladeadresser skal være en liste over komma-adskilte IP-adresser, eventuelt i CIDR-notation";
+"alertInvalidInterfaceMessageListenPortInvalid" = "Grænsefladens lytterport skal være mellem 0 og 65535, eller ikke specificeret";
+"alertInvalidInterfaceMessageMTUInvalid" = "Grænsefladens MTU skal være mellem 576 og 65535, eller ikke specificeret";
+"alertInvalidInterfaceMessageDNSInvalid" = "Grænsefladens DNS-servere skal være en liste over komma-adskilte IP-adresser";
+
+/* Alert title for error in the peer data */
+"alertInvalidPeerTitle" = "Ugyldig peer";
+
+/* Any one of the following alert messages can go with the above title */
+"alertInvalidPeerMessagePublicKeyRequired" = "Peerens offentlige nøgle er påkrævet";
+"alertInvalidPeerMessagePublicKeyInvalid" = "Peerens offentlige nøgle skal være en 32-byte nøgle i base64-kodning";
+"alertInvalidPeerMessagePreSharedKeyInvalid" = "Peerens fordelte nøgle skal være en 32-byte nøgle i base64-kodning";
+"alertInvalidPeerMessageAllowedIPsInvalid" = "Peerens tilladte IP'er skal være en liste over komma-adskilte IP-adresser, eventuelt i CIDR-notation";
+"alertInvalidPeerMessageEndpointInvalid" = "Peerens slutpunkt skal være af formen 'vært:port' eller '[vært]:port'";
+"alertInvalidPeerMessagePersistentKeepaliveInvalid" = "Peerens vedvarende hold-alive skal være mellem 0 og 65535, eller ikke specificeret";
+"alertInvalidPeerMessagePublicKeyDuplicated" = "To eller flere peerer kan ikke have samme offentlige nøgle";
+
+// Scanning QR code UI
+
+"scanQRCodeViewTitle" = "Scan QR-kode";
+"scanQRCodeTipText" = "Tip: Generer med `qrencode -t ansiutf8 < tunnel.conf`";
+
+// Scanning QR code alerts
+
+"alertScanQRCodeCameraUnsupportedTitle" = "Kamera understøttes ikke";
+"alertScanQRCodeCameraUnsupportedMessage" = "Denne enhed kan ikke scanne QR-koder";
+
+"alertScanQRCodeInvalidQRCodeTitle" = "Ugyldig QR-kode";
+"alertScanQRCodeInvalidQRCodeMessage" = "Den scannede QR-kode er ikke en gyldig WireGuard-konfiguration";
+
+"alertScanQRCodeUnreadableQRCodeTitle" = "Ugyldig kode";
+"alertScanQRCodeUnreadableQRCodeMessage" = "Den scannede kode kunne ikke læses";
+
+"alertScanQRCodeNamePromptTitle" = "Angiv venligst navn på den scannede tunnel";
+
+// Settings UI
+
+"settingsViewTitle" = "Indstillinger";
+
+"settingsSectionTitleAbout" = "Om";
+"settingsVersionKeyWireGuardForIOS" = "WireGuard til iOS";
+"settingsVersionKeyWireGuardGoBackend" = "WireGuard Go Backend";
+
+"settingsSectionTitleExportConfigurations" = "Eksportér konfigurationer";
+"settingsExportZipButtonTitle" = "Eksportér zip-arkiv";
+
+"settingsSectionTitleTunnelLog" = "Log";
+"settingsViewLogButtonTitle" = "Se log";
+
+// Log view
+
+"logViewTitle" = "Log";
+
+// Log alerts
+
+"alertUnableToRemovePreviousLogTitle" = "Fejl ved fjernelse af tidligere log";
+"alertUnableToRemovePreviousLogMessage" = "Den forudgående log kunne ikke fjernes";
+
+"alertUnableToWriteLogTitle" = "Fejl ved eksport af log";
+"alertUnableToWriteLogMessage" = "Kunne ikke skrive logfiler til fil";
+
+// Zip import / export error alerts
+
+"alertCantOpenInputZipFileTitle" = "Kan ikke læse zip-arkiv";
+"alertCantOpenInputZipFileMessage" = "Zip-arkivet kunne ikke læses.";
+
+"alertCantOpenOutputZipFileForWritingTitle" = "Kan ikke oprette zip-arkiv";
+"alertCantOpenOutputZipFileForWritingMessage" = "Kunne ikke åbne zip-fil til skrivning.";
+
+"alertBadArchiveTitle" = "Kan ikke læse zip-arkiv";
+"alertBadArchiveMessage" = "Dårligt eller beskadiget zip-arkiv.";
+
+"alertNoTunnelsToExportTitle" = "Intet at eksportere";
+"alertNoTunnelsToExportMessage" = "Der er ingen tunneler at eksportere";
+
+"alertNoTunnelsInImportedZipArchiveTitle" = "Ingen tunneler i zip-arkivet";
+"alertNoTunnelsInImportedZipArchiveMessage" = "Ingen .conf tunnel-filer blev fundet inde i zip-arkivet.";
+
+// Conf import error alerts
+
+"alertCantOpenInputConfFileTitle" = "Kan ikke importere fra fil";
+"alertCantOpenInputConfFileMessage (%@)" = "Filen ‘%@’ kunne ikke læses.";
+
+// Tunnel management error alerts
+
+"alertTunnelActivationFailureTitle" = "Aktiveringsfejl";
+"alertTunnelActivationFailureMessage" = "Tunnelen kunne ikke aktiveres. Kontroller, at du er forbundet til internettet.";
+"alertTunnelActivationSavedConfigFailureMessage" = "Kunne ikke hente tunneloplysninger fra den gemte konfiguration.";
+"alertTunnelActivationBackendFailureMessage" = "Kunne ikke aktivere Go backend-biblioteket.";
+"alertTunnelActivationFileDescriptorFailureMessage" = "Kunne ikke bestemme TUN-enhedens filbeskrivelse.";
+"alertTunnelActivationSetNetworkSettingsMessage" = "Kunne ikke anvende netværksindstillinger på tunnelobjektet.";
+
+"alertTunnelDNSFailureTitle" = "DNS-opløsningsfejl";
+"alertTunnelDNSFailureMessage" = "En eller flere slutpunkt-domæner kunne ikke løses.";
+
+"alertTunnelNameEmptyTitle" = "Intet navn angivet";
+"alertTunnelNameEmptyMessage" = "Kan ikke oprette tunnel med et tomt navn";
+
+"alertTunnelAlreadyExistsWithThatNameTitle" = "Navn findes allerede";
+"alertTunnelAlreadyExistsWithThatNameMessage" = "Der findes allerede en tunnel med det navn";
+
+"alertTunnelActivationErrorTunnelIsNotInactiveTitle" = "Aktivering pågår";
+"alertTunnelActivationErrorTunnelIsNotInactiveMessage" = "Tunnelen er allerede aktiv eller i gang med at blive aktiveret";
+
+// Tunnel management error alerts on system error
+
+/* The alert message that goes with the following titles would be
+   one of the alertSystemErrorMessage* listed further down */
+"alertSystemErrorOnListingTunnelsTitle" = "Kan ikke liste tunneler";
+"alertSystemErrorOnAddTunnelTitle" = "Kan ikke oprette tunnel";
+"alertSystemErrorOnModifyTunnelTitle" = "Kan ikke ændre tunnel";
+"alertSystemErrorOnRemoveTunnelTitle" = "Kan ikke fjerne tunnel";
+
+/* The alert message for this alert shall include
+ one of the alertSystemErrorMessage* listed further down */
+"alertTunnelActivationSystemErrorTitle" = "Aktiveringsfejl";
+"alertTunnelActivationSystemErrorMessage (%@)" = "Tunnelen kunne ikke aktiveres. %@";
+
+/* alertSystemErrorMessage* messages */
+"alertSystemErrorMessageTunnelConfigurationInvalid" = "Konfigurationen er ugyldig.";
+"alertSystemErrorMessageTunnelConfigurationDisabled" = "Konfigurationen er deaktiveret.";
+"alertSystemErrorMessageTunnelConnectionFailed" = "Forbindelsen mislykkedes.";
+"alertSystemErrorMessageTunnelConfigurationStale" = "Konfigurationen er forældet.";
+"alertSystemErrorMessageTunnelConfigurationReadWriteFailed" = "Læsning eller skrivning af konfigurationen mislykkedes.";
+"alertSystemErrorMessageTunnelConfigurationUnknown" = "Ukendt systemfejl.";
+
+// Mac status bar menu / pulldown menu / main menu
+
+"macMenuNetworks (%@)" = "Netværk: %@";
+"macMenuNetworksNone" = "Netværk: Ingen";
+
+"macMenuTitle" = "WireGuard";
+"macTunnelsMenuTitle" = "Tunneler";
+"macMenuManageTunnels" = "Administrer tunneler";
+"macMenuImportTunnels" = "Importer tunnel(er) fra fil…";
+"macMenuAddEmptyTunnel" = "Tilføj tom tunnel…";
+"macMenuViewLog" = "Se log";
+"macMenuExportTunnels" = "Eksporter tunneler til zip…";
+"macMenuAbout" = "Om WireGuard";
+"macMenuQuit" = "Afslut WireGuard";
+
+"macMenuHideApp" = "Skjul WireGuard";
+"macMenuHideOtherApps" = "Skjul andre";
+"macMenuShowAllApps" = "Vis alle";
+
+"macMenuFile" = "Fil";
+"macMenuCloseWindow" = "Luk vindue";
+
+"macMenuEdit" = "Rediger";
+"macMenuCut" = "Klip";
+"macMenuCopy" = "Kopiér";
+"macMenuPaste" = "Indsæt";
+"macMenuSelectAll" = "Markér alt";
+
+"macMenuTunnel" = "Tunnel";
+"macMenuToggleStatus" = "Skift status";
+"macMenuEditTunnel" = "Rediger…";
+"macMenuDeleteSelected" = "Slet valgte";
+
+"macMenuWindow" = "Vindue";
+"macMenuMinimize" = "Minimer";
+"macMenuZoom" = "Zoom";
+
+// Mac manage tunnels window
+
+// Mac manage tunnels window
+
+"macWindowTitleManageTunnels" = "Administrer WireGuard-tunneler";
+
+"macDeleteTunnelConfirmationAlertMessage (%@)" = "Er du sikker på, at du vil slette ‘%@’?";
+"macDeleteMultipleTunnelsConfirmationAlertMessage (%d)" = "Er du sikker på, at du vil slette %d tunneler?";
+"macDeleteTunnelConfirmationAlertInfo" = "Denne handling kan ikke fortrydes.";
+"macDeleteTunnelConfirmationAlertButtonTitleDelete" = "Slet";
+"macDeleteTunnelConfirmationAlertButtonTitleCancel" = "Annuller";
+"macDeleteTunnelConfirmationAlertButtonTitleDeleting" = "Sletter…";
+
+"macButtonImportTunnels" = "Importer tunnel(er) fra fil";
+"macSheetButtonImport" = "Importer";
+
+"macNameFieldExportLog" = "Gem log til:";
+"macSheetButtonExportLog" = "Gem";
+
+"macNameFieldExportZip" = "Eksporter tunneler til:";
+"macSheetButtonExportZip" = "Gem";
+
+"macButtonDeleteTunnels (%d)" = "Slet %d tunneler";
+
+"macButtonEdit" = "Rediger";
+
+// Mac detail/edit view fields
+
+"macFieldKey (%@)" = "%@:";
+"macFieldOnDemand" = "Efter behov:";
+"macFieldOnDemandSSIDs" = "SSID'er:";
+
+// Mac status display
+
+"macStatus (%@)" = "Status: %@";
+
+// Mac editing config
+
+"macEditDiscard" = "Kassér";
+"macEditSave" = "Gem";
+
+"macAlertNameIsEmpty" = "Navn er påkrævet";
+"macAlertDuplicateName (%@)" = "En anden tunnel med navnet ‘%@’ findes allerede.";
+
+"macAlertInvalidLine (%@)" = "Ugyldig linje: ‘%@’.";
+
+"macAlertNoInterface" = "Konfigurationen skal have en ‘Interface’-sektion.";
+"macAlertMultipleInterfaces" = "Konfigurationen skal kun have én ‘Interface’-sektion.";
+"macAlertPrivateKeyInvalid" = "Privat nøgle er ugyldig.";
+"macAlertListenPortInvalid (%@)" = "Lytteport ‘%@’ er ugyldig.";
+"macAlertAddressInvalid (%@)" = "Adresse ‘%@’ er ugyldig.";
+"macAlertDNSInvalid (%@)" = "DNS ‘%@’ er ugyldig.";
+"macAlertMTUInvalid (%@)" = "MTU ‘%@’ er ugyldig.";
+
+"macAlertUnrecognizedInterfaceKey (%@)" = "Grænsefladen indeholder en ukendt nøgle ‘%@’";
+"macAlertInfoUnrecognizedInterfaceKey" = "Gyldige nøgler er: ‘PrivateKey’, ‘ListenPort’, ‘Address’, ‘DNS’ og ‘MTU’.";
+
+"macAlertPublicKeyInvalid" = "Offentlig nøgle er ugyldig";
+"macAlertPreSharedKeyInvalid" = "Deling nøgle er ugyldig";
+"macAlertAllowedIPInvalid (%@)" = "Tilladte IP ‘%@’ er ugyldig";
+"macAlertEndpointInvalid (%@)" = "Slutpunkt ‘%@’ er ugyldig";
+"macAlertPersistentKeepliveInvalid (%@)" = "Vedvarende hold-alive-værdi ‘%@’ er ugyldig";
+
+"macAlertUnrecognizedPeerKey (%@)" = "Peer indeholder en ukendt nøgle ‘%@’";
+"macAlertInfoUnrecognizedPeerKey" = "Gyldige nøgler er: ‘PublicKey’, ‘PresharedKey’, ‘AllowedIPs’, ‘Endpoint’ og ‘PersistentKeepalive’";
+
+"macAlertMultipleEntriesForKey (%@)" = "Der skal kun være en post pr. sektion for nøglen ‘%@’";
+
+// Mac about dialog
+
+"macAppVersion (%@)" = "App-version: %@";
+"macGoBackendVersion (%@)" = "Go-backend-version: %@";
+
+// Privacy
+
+"macExportPrivateData" = "eksporter tunnel private nøgler";
+"macViewPrivateData" = "se tunnel private nøgler";
+"iosExportPrivateData" = "Godkend for at eksportere tunnel private nøgler.";
+"iosViewPrivateData" = "Godkend for at se tunnel private nøgler.";
+
+// Mac alert
+
+"macConfirmAndQuitAlertMessage" = "Ønsker du at lukke tunneladministratoren eller afslutte WireGuard helt?";
+"macConfirmAndQuitAlertInfo" = "Hvis du lukker tunneladministratoren, vil WireGuard stadig være tilgængelig fra menulinjeikonet.";
+"macConfirmAndQuitInfoWithActiveTunnel (%@)" = "Hvis du lukker tunneladministratoren, vil WireGuard stadig være tilgængelig fra menulinjeikonet.\n\nBemærk, at hvis du afslutter WireGuard helt, vil den aktuelle aktive tunnel (‘%@’) stadig forblive aktiv, indtil du deaktiverer den fra denne applikation eller gennem netværkspanelet i Systemindstillingerne.";
+"macConfirmAndQuitAlertQuitWireGuard" = "Afslut WireGuard";
+"macConfirmAndQuitAlertCloseWindow" = "Bevar i baggrunden";
+
+"macAppExitingWithActiveTunnelMessage" = "WireGuard afslutter med en aktiv tunnel";
+"macAppExitingWithActiveTunnelInfo" = "Tunnelen forbliver aktiv efter afslutningen. Du kan deaktivere den ved at genåbne denne applikation eller gennem netværkspanelet i Systemindstillingerne.";
+
+// Mac tooltip
+
+"macToolTipEditTunnel" = "Rediger tunnel (⌘E)";
+"macToolTipToggleStatus" = "Skift status (⌘T)";
+
+// Mac log view
+
+"macLogColumnTitleTime" = "Tid";
+"macLogColumnTitleLogMessage" = "Logbesked";
+"macLogButtonTitleClose" = "Luk";
+"macLogButtonTitleSave" = "Gem…";
+
+// Mac unusable tunnel view
+
+"macUnusableTunnelMessage" = "Konfigurationen for denne tunnel kan ikke findes i nøglebundtet.";
+"macUnusableTunnelInfo" = "Hvis denne tunnel blev oprettet af en anden bruger, kan kun den bruger se, redigere eller aktivere denne tunnel.";
+"macUnusableTunnelButtonTitleDeleteTunnel" = "Slet tunnel";
+
+// Mac App Store updating alert
+
+"macAppStoreUpdatingAlertMessage" = "App Store vil gerne opdatere WireGuard";
+"macAppStoreUpdatingAlertInfoWithOnDemand (%@)" = "Deaktiver venligst efter behov for tunnelen ‘%@’, deaktiver den, og fortsæt derefter med at opdatere i App Store.";
+"macAppStoreUpdatingAlertInfoWithoutOnDemand (%@)" = "Deaktiver venligst tunnelen ‘%@’ og fortsæt derefter med at opdatere i App Store.";
+
+// Donation
+
+"donateLink" = "♥ Donér til WireGuard-projektet";

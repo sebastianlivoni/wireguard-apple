@@ -422,6 +422,7 @@
 		6FE1765521C90BBE002690F8 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = Sources/WireGuardApp/tr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6FE1765521C90BBE002690F1 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = Sources/WireGuardApp/ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6FE1765521C90BBE002690ED /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = Sources/WireGuardApp/es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		96EB05222F7BEF6400205B2E /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = Sources/WireGuardApp/da.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6FE1765921C90E87002690EA /* LocalizationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationHelper.swift; sourceTree = "<group>"; };
 		6FE254FA219C10800028284D /* ZipImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipImporter.swift; sourceTree = "<group>"; };
 		6FE254FE219C60290028284D /* ZipExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipExporter.swift; sourceTree = "<group>"; };
@@ -1045,6 +1046,7 @@
 				tr,
 				ja,
 				es,
+				da,
 			);
 			mainGroup = 6FF4AC0B211EC46F002C96EB;
 			packageReferences = (
@@ -1527,6 +1529,7 @@
 				6FE1765521C90BBE002690F8 /* tr */,
 				6FE1765521C90BBE002690F1 /* ja */,
 				6FE1765521C90BBE002690ED /* es */,
+				96EB05222F7BEF6400205B2E /* da */,
 				6FE1765521C90BBE002690EA /* Base */,
 			);
 			name = Localizable.strings;
