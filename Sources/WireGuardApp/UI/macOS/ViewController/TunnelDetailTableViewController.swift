@@ -58,21 +58,14 @@ class TunnelDetailTableViewController: NSViewController {
         return tableView
     }()
 
-    let editButton: NSButton = {
+    /*let editButton: NSButton = {
         let button = NSButton()
         button.title = tr("macButtonEdit")
         button.setButtonType(.momentaryPushIn)
         button.bezelStyle = .rounded
         button.toolTip = tr("macToolTipEditTunnel")
         return button
-    }()
-
-    let box: NSBox = {
-        let box = NSBox()
-        box.titlePosition = .noTitle
-        box.fillColor = .unemphasizedSelectedContentBackgroundColor
-        return box
-    }()
+    }()*/
 
     let tunnelsManager: TunnelsManager
     let tunnel: TunnelContainer
@@ -120,8 +113,8 @@ class TunnelDetailTableViewController: NSViewController {
         tableView.dataSource = self
         tableView.delegate = self
 
-        editButton.target = self
-        editButton.action = #selector(handleEditTunnelAction)
+        /*editButton.target = self
+        editButton.action = #selector(handleEditTunnelAction)*/
 
         let clipView = NSClipView()
         clipView.documentView = tableView
@@ -133,33 +126,25 @@ class TunnelDetailTableViewController: NSViewController {
         scrollView.autohidesScrollers = true
 
         let containerView = NSView()
-        let bottomControlsContainer = NSLayoutGuide()
-        containerView.addLayoutGuide(bottomControlsContainer)
-        containerView.addSubview(box)
+        //let bottomControlsContainer = NSLayoutGuide()
+        //containerView.addLayoutGuide(bottomControlsContainer)
         containerView.addSubview(scrollView)
-        containerView.addSubview(editButton)
-        box.translatesAutoresizingMaskIntoConstraints = false
+        //containerView.addSubview(editButton)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        editButton.translatesAutoresizingMaskIntoConstraints = false
+        //editButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             containerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            containerView.leadingAnchor.constraint(equalTo: bottomControlsContainer.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: bottomControlsContainer.trailingAnchor),
-            bottomControlsContainer.heightAnchor.constraint(equalToConstant: 32),
-            scrollView.bottomAnchor.constraint(equalTo: bottomControlsContainer.topAnchor),
-            bottomControlsContainer.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            editButton.trailingAnchor.constraint(equalTo: bottomControlsContainer.trailingAnchor),
-            bottomControlsContainer.bottomAnchor.constraint(equalTo: editButton.bottomAnchor, constant: 0)
-        ])
-
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: box.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: box.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: box.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: box.trailingAnchor)
+            containerView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            //containerView.leadingAnchor.constraint(equalTo: bottomControlsContainer.leadingAnchor),
+            //containerView.trailingAnchor.constraint(equalTo: bottomControlsContainer.trailingAnchor),
+            //bottomControlsContainer.heightAnchor.constraint(equalToConstant: 32),
+            //scrollView.bottomAnchor.constraint(equalTo: bottomControlsContainer.topAnchor),
+            //bottomControlsContainer.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            //editButton.trailingAnchor.constraint(equalTo: bottomControlsContainer.trailingAnchor),
+            //bottomControlsContainer.bottomAnchor.constraint(equalTo: editButton.bottomAnchor, constant: 0)
         ])
 
         NSLayoutConstraint.activate([

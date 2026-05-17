@@ -35,15 +35,24 @@ class TunnelsListTableViewController: NSViewController {
 
         let button = NSPopUpButton(frame: NSRect.zero, pullsDown: true)
         button.menu = menu
-        button.bezelStyle = .smallSquare
+        if #available(macOS 26.0, *) {
+            button.bezelStyle = .glass
+        } else {
+            button.bezelStyle = .smallSquare
+        }
         (button.cell as? NSPopUpButtonCell)?.arrowPosition = .arrowAtBottom
+        button.imagePosition = .imageOnly
         return button
     }()
 
     let removeButton: NSButton = {
         let image = NSImage(named: NSImage.removeTemplateName)!
         let button = NSButton(image: image, target: self, action: #selector(handleRemoveTunnelAction))
-        button.bezelStyle = .smallSquare
+        if #available(macOS 26.0, *) {
+            button.bezelStyle = .flexiblePush
+        } else {
+            button.bezelStyle = .smallSquare
+        }
         button.imagePosition = .imageOnly
         return button
     }()
@@ -60,7 +69,11 @@ class TunnelsListTableViewController: NSViewController {
 
         let button = NSPopUpButton(frame: NSRect.zero, pullsDown: true)
         button.menu = menu
-        button.bezelStyle = .smallSquare
+        if #available(macOS 26.0, *) {
+            button.bezelStyle = .glass
+        } else {
+            button.bezelStyle = .smallSquare
+        }
         (button.cell as? NSPopUpButtonCell)?.arrowPosition = .arrowAtBottom
         return button
     }()
@@ -89,7 +102,9 @@ class TunnelsListTableViewController: NSViewController {
         let scrollView = NSScrollView()
         scrollView.hasVerticalScroller = true
         scrollView.autohidesScrollers = true
-        scrollView.borderType = .bezelBorder
+        if #unavailable(macOS 26.0) {
+            scrollView.borderType = .bezelBorder
+        }
 
         let clipView = NSClipView()
         clipView.documentView = tableView
@@ -97,7 +112,12 @@ class TunnelsListTableViewController: NSViewController {
 
         let buttonBar = NSStackView(views: [addButton, removeButton, actionButton])
         buttonBar.orientation = .horizontal
-        buttonBar.spacing = -1
+        if #available(macOS 26.0, *) {
+            buttonBar.spacing = 2
+        } else {
+            buttonBar.spacing = -1
+        }
+        //buttonBar.edgeInsets = NSEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 
         NSLayoutConstraint.activate([
             removeButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 26),
@@ -105,38 +125,68 @@ class TunnelsListTableViewController: NSViewController {
             removeButton.bottomAnchor.constraint(equalTo: buttonBar.bottomAnchor)
         ])
 
-        let fillerButton = FillerButton()
+        if #available(macOS 26.0, *) {
+            buttonBar.distribution = .fillEqually
 
-        let containerView = NSView()
-        containerView.addSubview(scrollView)
-        containerView.addSubview(buttonBar)
-        containerView.addSubview(fillerButton)
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        buttonBar.translatesAutoresizingMaskIntoConstraints = false
-        fillerButton.translatesAutoresizingMaskIntoConstraints = false
+            let containerView = NSView()
+            containerView.addSubview(scrollView)
+            containerView.addSubview(buttonBar)
+            scrollView.translatesAutoresizingMaskIntoConstraints = false
+            buttonBar.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            containerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: buttonBar.topAnchor, constant: 1),
-            containerView.leadingAnchor.constraint(equalTo: buttonBar.leadingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: buttonBar.bottomAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: fillerButton.topAnchor, constant: 1),
-            containerView.bottomAnchor.constraint(equalTo: fillerButton.bottomAnchor),
-            buttonBar.trailingAnchor.constraint(equalTo: fillerButton.leadingAnchor, constant: 1),
-            fillerButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
-        ])
+            NSLayoutConstraint.activate([
+                containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                containerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+                containerView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: buttonBar.topAnchor, constant: 1),
+                containerView.leadingAnchor.constraint(equalTo: buttonBar.leadingAnchor),
+                containerView.trailingAnchor.constraint(equalTo: buttonBar.trailingAnchor),
+                containerView.bottomAnchor.constraint(equalTo: buttonBar.bottomAnchor)
+            ])
 
-        NSLayoutConstraint.activate([
-            containerView.widthAnchor.constraint(equalToConstant: 180),
-            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120)
-        ])
+            NSLayoutConstraint.activate([
+                containerView.widthAnchor.constraint(equalToConstant: 180),
+                containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120)
+            ])
 
-        addButton.menu?.items.forEach { $0.target = self }
-        actionButton.menu?.items.forEach { $0.target = self }
+            addButton.menu?.items.forEach { $0.target = self }
+            actionButton.menu?.items.forEach { $0.target = self }
 
-        view = containerView
+            view = containerView
+        } else {
+            let fillerButton = FillerButton()
+
+            let containerView = NSView()
+            containerView.addSubview(scrollView)
+            containerView.addSubview(buttonBar)
+            containerView.addSubview(fillerButton)
+            scrollView.translatesAutoresizingMaskIntoConstraints = false
+            buttonBar.translatesAutoresizingMaskIntoConstraints = false
+            fillerButton.translatesAutoresizingMaskIntoConstraints = false
+
+            NSLayoutConstraint.activate([
+                containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                containerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+                containerView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: buttonBar.topAnchor, constant: 1),
+                containerView.leadingAnchor.constraint(equalTo: buttonBar.leadingAnchor),
+                containerView.bottomAnchor.constraint(equalTo: buttonBar.bottomAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: fillerButton.topAnchor, constant: 1),
+                containerView.bottomAnchor.constraint(equalTo: fillerButton.bottomAnchor),
+                buttonBar.trailingAnchor.constraint(equalTo: fillerButton.leadingAnchor, constant: 1),
+                fillerButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+            ])
+
+            NSLayoutConstraint.activate([
+                containerView.widthAnchor.constraint(equalToConstant: 180),
+                containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120)
+            ])
+
+            addButton.menu?.items.forEach { $0.target = self }
+            actionButton.menu?.items.forEach { $0.target = self }
+
+            view = containerView
+        }
     }
 
     override func viewWillAppear() {
@@ -322,6 +372,11 @@ extension TunnelsListTableViewController: NSTableViewDelegate {
         if !selectedTunnelIndices.isEmpty {
             delegate?.tunnelsSelected(tunnelIndices: tableView.selectedRowIndexes.sorted())
         }
+    }
+
+    // Always use active (blue) style
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+        return AlwaysSelectedRowView()
     }
 }
 
