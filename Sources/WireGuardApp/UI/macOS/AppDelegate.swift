@@ -15,6 +15,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var manageTunnelsWindowObject: NSWindow?
     var onAppDeactivation: (() -> Void)?
 
+    private let kSuppressQuitConfirmation = "SuppressQuitConfirmation"
+
     func applicationWillFinishLaunching(_ notification: Notification) {
         // To workaround a possible AppKit bug that causes the main menu to become unresponsive sometimes
         // (especially when launched through Xcode) if we call setActivationPolicy(.regular) in
@@ -66,6 +68,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func confirmAndQuit() {
+        if UserDefaults.standard.bool(forKey: kSuppressQuitConfirmation) {
+            NSApp.terminate(nil)
+            return
+        }
+
         let alert = NSAlert()
         alert.messageText = tr("macConfirmAndQuitAlertMessage")
         if let currentTunnel = tunnelsTracker?.currentTunnel, currentTunnel.status == .active || currentTunnel.status == .activating {
@@ -76,10 +83,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert.addButton(withTitle: tr("macConfirmAndQuitAlertCloseWindow"))
         alert.addButton(withTitle: tr("macConfirmAndQuitAlertQuitWireGuard"))
 
+        let checkbox = NSButton(checkboxWithTitle: tr("macDontShowThisMessageAgain"), target: nil, action: nil)
+        alert.accessoryView = checkbox
+
         NSApp.activate(ignoringOtherApps: true)
         if let manageWindow = manageTunnelsWindowObject {
             manageWindow.orderFront(self)
             alert.beginSheetModal(for: manageWindow) { response in
+                if checkbox.state == .on {
+                    UserDefaults.standard.set(true, forKey: self.kSuppressQuitConfirmation)
+                }
                 switch response {
                 case .alertFirstButtonReturn:
                     manageWindow.close()
