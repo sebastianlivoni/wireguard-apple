@@ -151,6 +151,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
+    func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows _: Bool) -> Bool {
+        self.showManageTunnelsWindow(completion: nil)
+        return true
+    }
+
     private func setDockIconAndMainMenuVisibility(isVisible: Bool, completion: (() -> Void)? = nil) {
         let currentActivationPolicy = NSApp.activationPolicy()
         let newActivationPolicy: NSApplication.ActivationPolicy = isVisible ? .regular : .accessory
@@ -185,6 +190,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         onAppDeactivation?()
         onAppDeactivation = nil
     }
+
+    var isEditToolbarItemVisible = false
 }
 
 extension AppDelegate {
@@ -216,16 +223,78 @@ extension AppDelegate: StatusMenuWindowDelegate {
             manageTunnelsRootVC = ManageTunnelsRootViewController(tunnelsManager: tunnelsManager)
             let window = NSWindow(contentViewController: manageTunnelsRootVC!)
             window.title = tr("macWindowTitleManageTunnels")
+            window.titlebarAppearsTransparent = true
+            window.styleMask.insert(.fullSizeContentView)
             window.setContentSize(NSSize(width: 800, height: 480))
             window.setFrameAutosaveName(NSWindow.FrameAutosaveName("ManageTunnelsWindow")) // Auto-save window position and size
+
+            let toolbar = NSToolbar(identifier: "ManageTunnelsToolbar")
+            toolbar.delegate = self
+            toolbar.showsBaselineSeparator = false
+            toolbar.displayMode = .iconAndLabel
+
+            window.toolbar = toolbar
+
             manageTunnelsWindowObject = window
             tunnelsTracker?.manageTunnelsRootVC = manageTunnelsRootVC
+
+            if let rootVC = manageTunnelsRootVC {
+                setEditToolbarItemVisible(rootVC.tunnelDetailVC != nil)
+            }
         }
         setDockIconAndMainMenuVisibility(isVisible: true) { [weak manageTunnelsWindowObject] in
             manageTunnelsWindowObject?.makeKeyAndOrderFront(self)
             completion?(manageTunnelsWindowObject)
         }
     }
+}
+
+extension AppDelegate: NSToolbarDelegate {
+    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        return [.editTunnel, .flexibleSpace]
+    }
+
+    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        return []
+    }
+
+    func toolbar(_ toolbar: NSToolbar,
+                 itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
+                 willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+        switch itemIdentifier {
+        case .editTunnel:
+            let item = NSToolbarItem(itemIdentifier: itemIdentifier)
+            item.label = "Edit"
+            item.paletteLabel = "Edit Tunnel"
+            item.toolTip = "Edit selected tunnel"
+            item.image = NSImage(systemSymbolName: "slider.horizontal.3", accessibilityDescription: nil)
+            item.target = nil
+            item.action = #selector(TunnelDetailTableViewController.handleEditTunnelAction)
+            return item
+
+        default:
+            return nil
+        }
+    }
+
+    func setEditToolbarItemVisible(_ visible: Bool) {
+        guard let toolbar = manageTunnelsWindowObject?.toolbar else { return }
+        guard visible != isEditToolbarItemVisible else { return }
+        isEditToolbarItemVisible = visible
+
+        if visible {
+            toolbar.insertItem(withItemIdentifier: .editTunnel, at: 0)
+        } else {
+            if let index = toolbar.items.firstIndex(where: { $0.itemIdentifier == .editTunnel }) {
+                toolbar.removeItem(at: index)
+            }
+        }
+    }
+}
+
+
+extension NSToolbarItem.Identifier {
+    static let editTunnel = NSToolbarItem.Identifier("EditTunnel")
 }
 
 @discardableResult

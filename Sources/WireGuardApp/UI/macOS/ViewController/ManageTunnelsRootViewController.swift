@@ -3,11 +3,15 @@
 
 import Cocoa
 
-class ManageTunnelsRootViewController: NSViewController {
+class ManageTunnelsRootViewController: NSSplitViewController {
 
     let tunnelsManager: TunnelsManager
     var tunnelsListVC: TunnelsListTableViewController?
-    var tunnelDetailVC: TunnelDetailTableViewController?
+    var tunnelDetailVC: TunnelDetailTableViewController? {
+        didSet {
+            setEditToolbarItemVisible(tunnelDetailVC != nil)
+        }
+    }
     let tunnelDetailContainerView = NSView()
     var tunnelDetailContentVC: NSViewController?
 
@@ -16,63 +20,50 @@ class ManageTunnelsRootViewController: NSViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    // Remove drag indicator on sidebar
+    override func splitView(_ splitView: NSSplitView, effectiveRect proposedEffectiveRect: NSRect, forDrawnRect drawnRect: NSRect, ofDividerAt dividerIndex: Int) -> NSRect {
+        return .zero
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func loadView() {
-        view = NSView()
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-        let horizontalSpacing: CGFloat = 20
-        let verticalSpacing: CGFloat = 20
-        let centralSpacing: CGFloat = 10
+        let listVC = TunnelsListTableViewController(tunnelsManager: tunnelsManager)
+        tunnelsListVC = listVC
 
-        let container = NSLayoutGuide()
-        view.addLayoutGuide(container)
-        NSLayoutConstraint.activate([
-            container.topAnchor.constraint(equalTo: view.topAnchor, constant: verticalSpacing),
-            view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: verticalSpacing),
-            container.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: horizontalSpacing),
-            view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: horizontalSpacing)
-        ])
+        let sidebarItem = NSSplitViewItem(sidebarWithViewController: listVC)
+        sidebarItem.allowsFullHeightLayout = true
+        sidebarItem.canCollapse = false
+        sidebarItem.isCollapsed = false
 
-        tunnelsListVC = TunnelsListTableViewController(tunnelsManager: tunnelsManager)
-        tunnelsListVC!.delegate = self
-        let tunnelsListView = tunnelsListVC!.view
+        let placeholderVC = ButtonedDetailViewController()
+        let detailItem = NSSplitViewItem(viewController: placeholderVC)
 
-        addChild(tunnelsListVC!)
-        view.addSubview(tunnelsListView)
-        view.addSubview(tunnelDetailContainerView)
+        addSplitViewItem(sidebarItem)
+        addSplitViewItem(detailItem)
 
-        tunnelsListView.translatesAutoresizingMaskIntoConstraints = false
-        tunnelDetailContainerView.translatesAutoresizingMaskIntoConstraints = false
+        listVC.delegate = self
 
-        NSLayoutConstraint.activate([
-            tunnelsListView.topAnchor.constraint(equalTo: container.topAnchor),
-            tunnelsListView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            tunnelsListView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            tunnelDetailContainerView.topAnchor.constraint(equalTo: container.topAnchor),
-            tunnelDetailContainerView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            tunnelDetailContainerView.leadingAnchor.constraint(equalTo: tunnelsListView.trailingAnchor, constant: centralSpacing),
-            tunnelDetailContainerView.trailingAnchor.constraint(equalTo: container.trailingAnchor)
-        ])
+        if tunnelsManager.numberOfTunnels() == 0 {
+            tunnelsListEmpty()
+        }
     }
 
-    private func setTunnelDetailContentVC(_ contentVC: NSViewController) {
-        if let currentContentVC = tunnelDetailContentVC {
-            currentContentVC.view.removeFromSuperview()
-            currentContentVC.removeFromParent()
+    private func setDetailViewController(_ vc: NSViewController) {
+        let detailItem = NSSplitViewItem(viewController: vc)
+        if splitViewItems.count > 1 {
+            removeSplitViewItem(splitViewItems[1])
         }
-        addChild(contentVC)
-        tunnelDetailContainerView.addSubview(contentVC.view)
-        contentVC.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tunnelDetailContainerView.topAnchor.constraint(equalTo: contentVC.view.topAnchor),
-            tunnelDetailContainerView.bottomAnchor.constraint(equalTo: contentVC.view.bottomAnchor),
-            tunnelDetailContainerView.leadingAnchor.constraint(equalTo: contentVC.view.leadingAnchor),
-            tunnelDetailContainerView.trailingAnchor.constraint(equalTo: contentVC.view.trailingAnchor)
-        ])
-        tunnelDetailContentVC = contentVC
+        addSplitViewItem(detailItem)
+    }
+
+    private func setEditToolbarItemVisible(_ visible: Bool) {
+        guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
+        appDelegate.setEditToolbarItemVisible(visible)
     }
 }
 
@@ -83,14 +74,14 @@ extension ManageTunnelsRootViewController: TunnelsListTableViewControllerDelegat
             let tunnel = tunnelsManager.tunnel(at: tunnelIndices.first!)
             if tunnel.isTunnelAvailableToUser {
                 let tunnelDetailVC = TunnelDetailTableViewController(tunnelsManager: tunnelsManager, tunnel: tunnel)
-                setTunnelDetailContentVC(tunnelDetailVC)
+                setDetailViewController(tunnelDetailVC)
                 self.tunnelDetailVC = tunnelDetailVC
             } else {
                 let unusableTunnelDetailVC = tunnelDetailContentVC as? UnusableTunnelDetailViewController ?? UnusableTunnelDetailViewController()
                 unusableTunnelDetailVC.onButtonClicked = { [weak tunnelsListVC] in
                     tunnelsListVC?.handleRemoveTunnelAction()
                 }
-                setTunnelDetailContentVC(unusableTunnelDetailVC)
+                setDetailViewController(unusableTunnelDetailVC)
                 self.tunnelDetailVC = nil
             }
         } else if tunnelIndices.count > 1 {
@@ -99,7 +90,7 @@ extension ManageTunnelsRootViewController: TunnelsListTableViewControllerDelegat
             multiSelectionVC.onButtonClicked = { [weak tunnelsListVC] in
                 tunnelsListVC?.handleRemoveTunnelAction()
             }
-            setTunnelDetailContentVC(multiSelectionVC)
+            setDetailViewController(multiSelectionVC)
             self.tunnelDetailVC = nil
         }
     }
@@ -111,7 +102,7 @@ extension ManageTunnelsRootViewController: TunnelsListTableViewControllerDelegat
             guard let self = self else { return }
             ImportPanelPresenter.presentImportPanel(tunnelsManager: self.tunnelsManager, sourceVC: self)
         }
-        setTunnelDetailContentVC(noTunnelsVC)
+        setDetailViewController(noTunnelsVC)
         self.tunnelDetailVC = nil
     }
 }
